@@ -11,6 +11,8 @@ input{padding:8px;font:inherit;margin:6px 0;width:60%}
 .box{background:#1d1d38;border-radius:8px;padding:12px;overflow:auto;margin:6px 0}
 .bar{display:block;height:6px;background:#400;border-radius:3px}.bar i{display:block;height:6px;background:#4c4;border-radius:3px}
 h2{margin:6px 0}
+canvas{width:100%;max-width:480px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;display:block;background:#000}
+#pad button{width:64px;height:48px;font-size:20px}
 </style></head><body><div id="app"></div><script>
 const P={k:'#1a1a2e',w:'#fff',s:'#f2c9a0',r:'#d33',o:'#f90',y:'#fd3',g:'#4b4',G:'#284',b:'#46d',p:'#93c',P:'#526',n:'#853',e:'#aab',E:'#556',c:'#5de',m:'#f7a'};
 // สไปรต์ 10x10 วาดครึ่งซ้าย (5 คอลัมน์) แล้วสะท้อนอัตโนมัติ
@@ -68,22 +70,55 @@ const m=()=>{const t=G.msg?`<p>⚠ ${G.msg}</p>`:'';G.msg='';return t};
 const st=()=>`<div>${G.party.map(u=>`<div class=u>${img(u.sp,'f s')}<b>${u.n}</b> Lv${u.lv}<br>HP ${u.hp}/${u.mhp}${bar(u.hp,u.mhp)}MP ${u.mp}/${u.mmp}</div>`).join('')}</div><p>💰${G.gold} 🧪ยา ${G.pot}</p>`;
 function title(){show(`<h2>ตำนานเมล็ดดาว<br>ภาค 1: ผนึกใต้เถ้าถ่าน</h2><p>ตั้งชื่อวีรบุรุษ แล้วเลือกคลาส</p><input id=nm placeholder="ชื่อ" maxlength=12><br>`+
 Object.keys(CL).map(k=>`<div class=u>${img(k,'f s')}<b>${CL[k].n}</b><br>HP ${CL[k].hp} MP ${CL[k].mp}<br>สกิล: ${CL[k].sk[0]}<br>${bt('เลือก',`begin('${k}')`)}</div>`).join(''))}
-function begin(c){const nm=$('nm').value.trim()||'ผู้กล้า';G={name:nm,gold:50,pot:2,fl:{},msg:'',party:[mk({...CL[c],n:nm,sp:c})]};dlg(INTRO(),village)}
+function begin(c){const nm=$('nm').value.trim()||'ผู้กล้า';G={name:nm,gold:50,pot:2,fl:{},msg:'',loc:'v',x:10,y:7,st:0,party:[mk({...CL[c],n:nm,sp:c})]};dlg(INTRO(),village)}
 function dlg(l,cb){D={l,cb,i:0};dl()}
 function dl(){if(D.i>=D.l.length)return D.cb();const[s,n,t]=D.l[D.i++];show(`<div class=box>${s?img(s):''}<b>${n}</b><p>${t}</p></div>`+bt('ต่อไป','dl()'))}
-function village(){show(st()+`<h2>หมู่บ้านโอ๊กรูม</h2>`+m()+bt('คุยกับเฒ่าโอ๊กรูม','talk()')+bt('ร้านเมี่ยวโตะ','shop()')+bt('โรงเตี๊ยม (5 เหรียญ)','inn()')+bt('ป่ากระซิบ',"area('f')"))}
 function talk(){const f=G.fl;dlg([['ok','เฒ่าโอ๊กรูม',f.done?'เจ้าช่วยโลกไว้แล้ว ขอบใจนัก พักผ่อนเถิด':f.ly?'ซากปรักอยู่ลึกในป่า ฝึกให้ถึงเลเวล 5 ก่อนเข้าห้องผนึก':'ไปป่ากระซิบทางตะวันออก พบไลรา']],village)}
 function shop(){show(st()+`<div class=box>${img('mt')}<b>เมี่ยวโตะ</b> (เผ่าแมวพเนจร)<p>"ยาฟื้นฟู 15 เหรียญ เมี๊ยว~"</p></div>`+bt('ซื้อยา (15)','buy()',G.gold<15)+bt('กลับ','village()'))}
 function buy(){if(G.gold>=15){G.gold-=15;G.pot++}shop()}
 function inn(){if(G.gold<5)G.msg='เหรียญไม่พอ';else{G.gold-=5;G.party.forEach(u=>{u.hp=u.mhp;u.mp=u.mmp});G.msg='พักจนเต็มกำลัง'}village()}
-function area(a){G.loc=a;const f=a=='f';
-if(f&&!G.fl.ly)return dlg(LY,()=>{G.fl.ly=1;G.party.push(join(CO.ly));area('f')});
-if(!f&&!G.fl.tk)return dlg(TK,()=>{G.fl.tk=1;G.party.push(join(CO.tk));area('r')});
-show(st()+`<h2>${f?'ป่ากระซิบ':'ซากปรักเถ้า'}</h2>`+m()+bt('สำรวจ','explore()')+(f?bt('ไปซากปรักเถ้า (Lv3)','goR()')+bt('กลับหมู่บ้าน','village()'):bt(G.fl.done?'ห้องผนึกว่างเปล่า':'เข้าห้องผนึก (Lv5)','boss()',G.fl.done)+bt('กลับป่า',"area('f')")))}
-function goR(){if(G.party[0].lv<3){G.msg='อันตรายเกินไป ต้องเลเวล 3';return area('f')}area('r')}
-function explore(){const p=G.loc=='f'?['sl','bt','mu']:['bt','mu','sp'];fight(Array.from({length:R(2)+1},()=>p[R(3)]),()=>area(G.loc))}
-function boss(){if(G.party[0].lv<5){G.msg='พลังจากห้องผนึกบีบคั้น ต้องเลเวล 5';return area('r')}dlg(BI,()=>fight(['dr'],()=>dlg(BO,()=>{G.fl.done=1;end()})))}
 function end(){show(`<div class=box><h2>จบภาคที่ 1</h2><p>เมล็ดดาวเม็ดแรกถูกกู้คืน ภาคต่อไป: ภาค 2 ทะเลทรายกระจก</p></div>`+bt('เดินเล่นต่อ','village()')+bt('เริ่มใหม่','title()'))}
+// ===== แผนที่เดินสำรวจ =====
+const AR={
+v:{n:'หมู่บ้านโอ๊กรูม',w:20,h:13,g:'#4a8a3a',l:0,r:[[2,2,5,3,'3'],[13,2,5,3,'3'],[8,8,4,2,'2']],o:[[4,4,'D']],e:[[9,6,'ok',()=>talk()],[15,6,'mt',()=>shop()]],p:[[19,6,'f',1,8]]},
+f:{n:'ป่ากระซิบ',w:24,h:16,g:'#2f6b34',l:1,pool:['sl','bt','mu'],r:[],o:[],e:[],p:[[0,8,'v',18,6],[23,8,'r',1,7]]},
+r:{n:'ซากปรักเถ้า',w:20,h:14,g:'#4a4a5e',l:1,pool:['bt','mu','sp'],r:[],o:[[17,7,'G']],e:[],p:[[0,7,'f',22,8]]}};
+const TS=32,VW=15,VH=10,IM={};
+const im=k=>{if(!IM[k]){img(k);IM[k]=new Image();IM[k].onload=()=>$('cv')&&draw();IM[k].src=C[k]}return IM[k]};
+const say=t=>{$('mm').textContent=t};
+function gen(a){const A=AR[a];if(A.t)return;A.t=[];
+for(let y=0;y<A.h;y++){A.t.push([]);for(let x=0;x<A.w;x++)A.t[y].push(x*y==0||x==A.w-1||y==A.h-1?'1':A.l&&(7*x+13*y)%9==0?'1':'0')}
+A.r.forEach(([x,y,w,h,c])=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)A.t[j][i]=c});
+A.o.forEach(([x,y,c])=>A.t[y][x]=c);
+[...A.p,...A.e,...A.o].forEach(([x,y])=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(i>0&&j>0&&i<A.w-1&&j<A.h-1&&A.t[j][i]=='1')A.t[j][i]='0'});
+A.p.forEach(([x,y])=>A.t[y][x]='4')}
+function showMap(){gen(G.loc);show(st()+`<h2>${AR[G.loc].n}</h2><canvas id=cv width=480 height=320></canvas><p id=mm>${G.msg}</p><div id=pad>${bt('◀','mv(-1,0)')}${bt('▲','mv(0,-1)')}${bt('▼','mv(0,1)')}${bt('▶','mv(1,0)')}</div><small>เดินด้วยลูกศร/WASD หรือปุ่มบนจอ ชนตัวละครเพื่อคุย</small>`);G.msg='';draw()}
+function draw(){const c=$('cv');if(!c)return;const x=c.getContext('2d'),A=AR[G.loc],cx=Math.max(0,Math.min(A.w-VW,G.x-7)),cy=Math.max(0,Math.min(A.h-VH,G.y-5));
+x.imageSmoothingEnabled=false;
+for(let j=0;j<VH;j++)for(let i=0;i<VW;i++){const t=A.t[cy+j][cx+i],px=i*TS,py=j*TS;
+x.fillStyle=A.g;x.fillRect(px,py,TS,TS);if((i+cx+j+cy)%2){x.fillStyle='rgba(0,0,0,.07)';x.fillRect(px,py,TS,TS)}
+if(t=='1'){if(G.loc=='r'){x.fillStyle='#889';x.fillRect(px+6,py+4,20,26);x.fillStyle='#667';x.fillRect(px+6,py+4,20,5)}else{x.fillStyle='#6a4a2a';x.fillRect(px+13,py+18,6,12);x.fillStyle='#1f5a2a';x.beginPath();x.arc(px+16,py+14,13,0,7);x.fill()}}
+else if(t=='2'){x.fillStyle='#2a5fb0';x.fillRect(px,py,TS,TS)}
+else if(t=='3'||t=='D'){x.fillStyle='#b9895a';x.fillRect(px,py,TS,TS);if(!'3D'.includes((A.t[cy+j-1]||[])[cx+i]||'x')){x.fillStyle='#b33';x.fillRect(px,py,TS,14)}
+if(t=='D'){x.fillStyle='#3a2210';x.fillRect(px+8,py+8,16,24);x.fillStyle='#fd3';x.font='10px sans-serif';x.fillText('INN',px+7,py+7)}}
+else if(t=='G'){x.fillStyle='#527';x.fillRect(px,py,TS,TS);x.fillStyle='#c6f';x.fillRect(px+6,py+6,20,26)}
+else if(t=='4'){x.fillStyle='#e8c870';x.fillRect(px,py,TS,TS)}}
+A.e.forEach(([ex,ey,s])=>{const i=ex-cx,j=ey-cy;if(i>=0&&j>=0&&i<VW&&j<VH)x.drawImage(im(s),i*TS,j*TS,TS,TS)});
+x.drawImage(im(G.party[0].sp),(G.x-cx)*TS,(G.y-cy)*TS,TS,TS)}
+function mv(dx,dy){const A=AR[G.loc],x=G.x+dx,y=G.y+dy;if(x<0||y<0||x>=A.w||y>=A.h)return;
+const t=A.t[y][x],en=A.e.find(e=>e[0]==x&&e[1]==y);
+if(en)return en[3]();if(t=='D')return inn();if(t=='G')return boss();if('123'.includes(t))return;
+const p=A.p.find(q=>q[0]==x&&q[1]==y);
+if(p){if(p[2]=='r'&&G.party[0].lv<3)return say('อันตรายเกินไป ต้องเลเวล 3');return area(p[2],p[3],p[4])}
+G.x=x;G.y=y;draw();
+if(A.pool&&++G.st>=6&&R(100)<14){G.st=0;fight(Array.from({length:R(2)+1},()=>A.pool[R(3)]),showMap)}}
+function area(a,sx,sy){G.loc=a;if(sx!=null){G.x=sx;G.y=sy}
+if(a=='f'&&!G.fl.ly)return dlg(LY,()=>{G.fl.ly=1;G.party.push(join(CO.ly));showMap()});
+if(a=='r'&&!G.fl.tk)return dlg(TK,()=>{G.fl.tk=1;G.party.push(join(CO.tk));showMap()});
+showMap()}
+function village(){G.loc=='v'?area('v'):area('v',10,7)}
+function boss(){if(G.fl.done)return say('ห้องผนึกว่างเปล่าแล้ว');if(G.party[0].lv<5)return say('พลังจากห้องผนึกบีบคั้น ต้องเลเวล 5');dlg(BI,()=>fight(['dr'],()=>dlg(BO,()=>{G.fl.done=1;end()})))}
+addEventListener('keydown',e=>{const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k&&$('cv')){e.preventDefault();mv(...k)}});
 // ===== ต่อสู้ =====
 const dm=(a,d,p)=>Math.max(1,Math.round((a*p-d*.5)*(.85+Math.random()*.3)));
 const weak=()=>G.party.filter(x=>x.hp>0).sort((a,b)=>a.hp/a.mhp-b.hp/b.mhp)[0];
