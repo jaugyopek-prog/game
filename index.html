@@ -5,32 +5,18 @@ body{margin:0;background:#12121f;color:#eee;font:16px/1.5 sans-serif}
 button{background:#2d2d55;color:#fff;border:1px solid #66a;border-radius:6px;padding:8px 12px;margin:3px;font:inherit;cursor:pointer}
 button:disabled{opacity:.4;cursor:default}
 input{padding:8px;font:inherit;margin:6px 0;width:60%}
-.f{width:80px;height:80px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;background:#1d1d38;float:left;margin-right:10px}
-.f.s{width:56px;height:56px;float:none;margin:0 0 4px;display:block}
+.f{width:96px;height:96px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;background:#1d1d38;float:left;margin-right:10px}
+.f.s{width:64px;height:64px;float:none;margin:0 0 4px;display:block}
 .u,.e{display:inline-block;margin:4px;padding:6px;background:#1d1d38;border-radius:6px;font-size:13px;vertical-align:top;min-width:110px}
 .box{background:#1d1d38;border-radius:8px;padding:12px;overflow:auto;margin:6px 0}
 .bar{display:block;height:6px;background:#400;border-radius:3px}.bar i{display:block;height:6px;background:#4c4;border-radius:3px}
 h2{margin:6px 0}
 canvas{width:100%;max-width:480px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;display:block;background:#000}
 #pad button{width:64px;height:48px;font-size:20px}
-</style></head><body><div id="app"></div><script>
-const P={k:'#1a1a2e',w:'#fff',s:'#f2c9a0',r:'#d33',o:'#f90',y:'#fd3',g:'#4b4',G:'#284',b:'#46d',p:'#93c',P:'#526',n:'#853',e:'#aab',E:'#556',c:'#5de',m:'#f7a'};
-// สไปรต์ 10x10 วาดครึ่งซ้าย (5 คอลัมน์) แล้วสะท้อนอัตโนมัติ
-const S={
-kn:["..kkk",".keee","keeee","kssss","kskss","kssss",".ksrs","..kss",".keee","keeEE"],
-mg:["....p","...pp","..ppp",".kppp","kssss","kskss","kssss",".kwww","..kpp",".kppp"],
-rg:["..kgg",".kggg","kgggg","kgsss","kgsks","kgsss",".ksss","..kgg",".kgnn","kgnnn"],
-ly:["..ccc",".cccc","ccccc","kcsss","kskss","ksmss",".ksss","..kcc",".kccc","kmccc"],
-tk:["keeee","keeEE","keeee","kecce","keeee","keEEE","keeee",".keee","kEEEE","keeee"],
-ok:["..ggg",".gGgG","gGggG","knnnn","knknn","knnnn","kwwww",".kwww","..knn","..knn"],
-mt:[".ko..","koooo","koooo","kokoo","koomm","kwooo",".kooo","..kbb",".kbbb","kbbyy"],
-sl:[".....",".....","..kgg",".kggg","kgwgg","kgggg","kgGGG","kgggg",".kkkk","....."],
-bt:["...kk","k.kpp","kkppp","kprpp","kpppw","kkppp",".kkpp","..kkp","....k","....."],
-mu:["..krr",".krwr","krrrr","krwrr","kkkkk",".kyyy",".yyky",".kyyy",".kyyy","..kkk"],
-sp:["k....",".k..k","..kPP","k.kPr",".kPPr","kkPPP","..kPP",".k.kk","k....","....."],
-dr:["kE...","kEeee","keeee","keooe","keeee","keEEE","keeEk",".kwkw",".kwkw","..kkk"]};
+</style></head><body><div id="app"></div><script src="art.js"></script>
+<script>
 const C={},$=i=>document.getElementById(i),R=n=>Math.floor(Math.random()*n);
-const img=(k,c='f')=>{if(!C[k]){const v=document.createElement('canvas');v.width=v.height=10;const x=v.getContext('2d');
+const img=(k,c='f')=>{if(!C[k]){const v=document.createElement('canvas');v.width=S[k][0].length*2;v.height=S[k].length;const x=v.getContext('2d');
 S[k].forEach((l,y)=>[...l+[...l].reverse().join('')].forEach((q,i)=>{if(q!='.'){x.fillStyle=P[q];x.fillRect(i,y,1,1)}}));C[k]=v.toDataURL()}
 return`<img class="${c}" src="${C[k]}">`};
 const show=h=>$('app').innerHTML=h,bt=(t,f,d)=>`<button onclick="${f}"${d?' disabled':''}>${t}</button>`;
