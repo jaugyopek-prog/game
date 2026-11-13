@@ -1,475 +1,119 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Last Seed of Aethelgard</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #10b981;
-            --accent-hover: #059669;
-            --text-color: #f8fafc;
-            --danger: #ef4444;
-            --mana-color: #3b82f6;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        #game-container {
-            width: 100%;
-            max-width: 950px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        header {
-            text-align: center;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 10px;
-        }
-
-        header h1 {
-            color: var(--accent);
-            font-size: 1.8rem;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-around;
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        /* Battlefield Layout */
-        .battlefield {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            min-height: 250px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .unit-card {
-            background: #334155;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .unit-card.active {
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-        }
-
-        .unit-card.dead {
-            opacity: 0.4;
-            filter: grayscale(1);
-        }
-
-        .unit-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .bar-container {
-            background: #0f172a;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-
-        .hp-bar {
-            height: 100%;
-            background: var(--danger);
-            width: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .mp-bar {
-            height: 100%;
-            background: var(--mana-color);
-            width: 100%;
-            transition: width 0.3s ease;
-        }
-
-        /* Controls & Logs */
-        .controls-area {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .action-board {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:hover:not(:disabled) {
-            background: var(--accent-hover);
-        }
-
-        button:disabled {
-            background: #475569;
-            cursor: not-allowed;
-        }
-
-        .log-box {
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 8px;
-            height: 180px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            display: flex;
-            flex-direction: column-reverse;
-        }
-
-        .log-entry {
-            margin-bottom: 4px;
-            line-height: 1.4;
-        }
-
-        .log-entry.hero-action { color: #38bdf8; }
-        .log-entry.enemy-action { color: #f87171; }
-        .log-entry.system { color: #facc15; }
-
-        @media (max-width: 768px) {
-            .battlefield, .controls-area {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<div id="game-container">
-    <header>
-        <h1>🌱 The Last Seed of Aethelgard</h1>
-        <p>การเดินทางเพื่อฟื้นฟูพฤกษาศักดิ์สิทธิ์และสร้างบ้านหลังใหม่</p>
-    </header>
-
-    <div class="status-bar">
-        <span>📍 ด่านที่: <span id="stage-num">1</span> / 5</span>
-        <span>🌳 พลังพฤกษา: <span id="seed-power">100</span>%</span>
-        <span>🏆 EXP ปาร์ตี้: <span id="party-exp">0</span></span>
-    </div>
-
-    <div class="battlefield">
-        <!-- Party Side -->
-        <div>
-            <div class="section-title">🛡️ ปาร์ตี้ผู้พิทักษ์</div>
-            <div id="party-list"></div>
-        </div>
-        <!-- Enemy Side -->
-        <div>
-            <div class="section-title">👹 มอนสเตอร์ผู้รุกราน</div>
-            <div id="enemy-list"></div>
-        </div>
-    </div>
-
-    <div class="controls-area">
-        <div class="action-board">
-            <div id="turn-indicator" style="font-weight: bold; color: var(--accent);">ถึงเทิร์นของ: -</div>
-            <div class="skills-grid" id="skills-container"></div>
-        </div>
-        <div>
-            <div class="section-title">📜 บันทึกการต่อสู้</div>
-            <div class="log-box" id="combat-log"></div>
-        </div>
-    </div>
-</div>
-
-<script>
-// --- GAME DATA & STATE ---
-const HEROES_BASE = [
-    { id: 'eldrin', name: 'Eldrin', race: 'Human', role: 'Guardian', maxHp: 120, hp: 120, maxMp: 50, mp: 50, atk: 15, def: 10, speed: 10, skills: [
-        { name: 'Strike', mpCost: 0, power: 1.0, type: 'damage', desc: 'โจมตีปกติ' },
-        { name: 'Leaf Shield', mpCost: 15, power: 0, type: 'buff_def', desc: 'เพิ่ม DEF 40% ทั้งทีม' },
-        { name: 'Nature Grace', mpCost: 30, power: 35, type: 'heal_all', desc: 'ฮีลเพื่อนทุกคน' }
-    ]},
-    { id: 'sylphira', name: 'Sylphira', race: 'High Elf', role: 'Arcane Weaver', maxHp: 75, hp: 75, maxMp: 100, mp: 100, atk: 25, def: 4, speed: 14, skills: [
-        { name: 'Arcane Shot', mpCost: 0, power: 1.0, type: 'damage', desc: 'ยิงเวทปกติ' },
-        { name: 'Chain Lightning', mpCost: 25, power: 1.4, type: 'aoe_damage', desc: 'โจมตีเวทหมู่' },
-        { name: 'Focus Mind', mpCost: 10, power: 20, type: 'restore_mp', desc: 'ฟื้นฟู MP ให้ตัวเอง' }
-    ]},
-    { id: 'grommash', name: 'Grommash', race: 'Iron-Horn Orc', role: 'Berserker', maxHp: 140, hp: 140, maxMp: 30, mp: 30, atk: 22, def: 8, speed: 8, skills: [
-        { name: 'Heavy Cleave', mpCost: 0, power: 1.1, type: 'damage', desc: 'ฟันหนัก' },
-        { name: 'Battle Shout', mpCost: 15, power: 1.5, type: 'self_buff_atk', desc: 'บัฟ ATK 50%' },
-        { name: 'Earthshaker', mpCost: 25, power: 2.0, type: 'damage', desc: 'ทุบพื้นรุนแรง' }
-    ]},
-    { id: 'nixie', name: 'Nixie', race: 'Shadow Catfolk', role: 'Shadow Blade', maxHp: 85, hp: 85, maxMp: 60, mp: 60, atk: 20, def: 5, speed: 18, skills: [
-        { name: 'Quick Slash', mpCost: 0, power: 1.0, type: 'damage', desc: 'โจมตีความเร็วสูง' },
-        { name: 'Shadow Strike', mpCost: 20, power: 1.8, type: 'damage', desc: 'แทงจุดตาย' },
-        { name: 'Poison Edge', mpCost: 15, power: 1.2, type: 'damage', desc: 'โจมตีติดพิษ' }
-    ]}
-];
-
-const STAGES = [
-    { stage: 1, enemies: [{ name: 'Gloom Stalker', hp: 90, maxHp: 90, atk: 12, def: 3, speed: 11 }] },
-    { stage: 2, enemies: [{ name: 'Stone Golem', hp: 160, maxHp: 160, atk: 18, def: 12, speed: 5 }] },
-    { stage: 3, enemies: [{ name: 'Corrupted Treant', hp: 220, maxHp: 220, atk: 22, def: 8, speed: 9 }] },
-    { stage: 4, enemies: [{ name: 'Ash Cultist A', hp: 130, maxHp: 130, atk: 20, def: 5, speed: 12 }, { name: 'Ash Cultist B', hp: 130, maxHp: 130, atk: 20, def: 5, speed: 12 }] },
-    { stage: 5, enemies: [{ name: 'Abyssal Dragon (Boss)', hp: 450, maxHp: 450, atk: 32, def: 15, speed: 13 }] }
-];
-
-let party = [];
-let enemies = [];
-let currentStage = 0;
-let turnOrder = [];
-let currentTurnIndex = 0;
-let partyExp = 0;
-
-// --- INITIALIZATION ---
-function initGame() {
-    party = JSON.parse(JSON.stringify(HEROES_BASE));
-    currentStage = 0;
-    partyExp = 0;
-    addLog("🌲 การเดินทางเริ่มต้นขึ้น... ปกป้องพฤกษาศักดิ์สิทธิ์!", "system");
-    loadStage(currentStage);
-}
-
-function loadStage(stageIndex) {
-    if (stageIndex >= STAGES.length) {
-        addLog("🎉 คุณสามารถสร้างหมู่บ้านใหม่สำเร็จและปกป้องพฤกษาศักดิ์สิทธิ์ได้สำเร็จ!", "system");
-        alert("คุณชนะเกม! สมบูรณ์แบบ!");
-        return;
-    }
-    
-    document.getElementById('stage-num').innerText = stageIndex + 1;
-    enemies = JSON.parse(JSON.stringify(STAGES[stageIndex].enemies));
-    
-    // Reset status buffs
-    party.forEach(h => { if(h.hp > 0) h.tempAtkBuff = 1; h.tempDefBuff = 1; });
-    
-    addLog(`⚔️ เข้าสู่ด่านที่ ${stageIndex + 1}! ศัตรูปรากฏตัว!`, "system");
-    renderUnits();
-    calculateTurnOrder();
-    startTurn();
-}
-
-// --- RENDER SYSTEM ---
-function renderUnits() {
-    const partyContainer = document.getElementById('party-list');
-    const enemyContainer = document.getElementById('enemy-list');
-    
-    partyContainer.innerHTML = '';
-    enemyContainer.innerHTML = '';
-
-    party.forEach((unit, idx) => {
-        const activeClass = (turnOrder[currentTurnIndex] === unit) ? 'active' : '';
-        const deadClass = unit.hp <= 0 ? 'dead' : '';
-        const hpPercent = Math.max(0, (unit.hp / unit.maxHp) * 100);
-        const mpPercent = Math.max(0, (unit.mp / unit.maxMp) * 100);
-
-        partyContainer.innerHTML += `
-            <div class="unit-card ${activeClass} ${deadClass}">
-                <div class="unit-header">
-                    <span>${unit.name} <small>(${unit.race})</small></span>
-                    <span>HP: ${unit.hp}/${unit.maxHp}</span>
-                </div>
-                <div class="bar-container"><div class="hp-bar" style="width: ${hpPercent}%"></div></div>
-                <div class="bar-container"><div class="mp-bar" style="width: ${mpPercent}%"></div></div>
-            </div>
-        `;
-    });
-
-    enemies.forEach((unit, idx) => {
-        const activeClass = (turnOrder[currentTurnIndex] === unit) ? 'active' : '';
-        const deadClass = unit.hp <= 0 ? 'dead' : '';
-        const hpPercent = Math.max(0, (unit.hp / unit.maxHp) * 100);
-
-        enemyContainer.innerHTML += `
-            <div class="unit-card ${activeClass} ${deadClass}">
-                <div class="unit-header">
-                    <span>${unit.name}</span>
-                    <span>HP: ${unit.hp}/${unit.maxHp}</span>
-                </div>
-                <div class="bar-container"><div class="hp-bar" style="width: ${hpPercent}%"></div></div>
-            </div>
-        `;
-    });
-}
-
-function renderSkills(actor) {
-    const container = document.getElementById('skills-container');
-    container.innerHTML = '';
-
-    if (!actor || enemies.length === 0 || actor.hp <= 0) return;
-
-    actor.skills.forEach(skill => {
-        const btn = document.createElement('button');
-        btn.innerHTML = `${skill.name} <br><small>MP: ${skill.mpCost} | ${skill.desc}</small>`;
-        btn.disabled = actor.mp < skill.mpCost;
-        btn.onclick = () => executeHeroAction(actor, skill);
-        container.appendChild(btn);
-    });
-}
-
-// --- TURN MANAGEMENT ---
-function calculateTurnOrder() {
-    const aliveParty = party.filter(h => h.hp > 0);
-    const aliveEnemies = enemies.filter(e => e.hp > 0);
-    turnOrder = [...aliveParty, ...aliveEnemies].sort((a, b) => b.speed - a.speed);
-    currentTurnIndex = 0;
-}
-
-function startTurn() {
-    renderUnits();
-    
-    // Check combat end condition
-    if (enemies.every(e => e.hp <= 0)) {
-        addLog(`✨ ได้รับชัยชนะในด่านที่ ${currentStage + 1}!`, "system");
-        partyExp += 50 * (currentStage + 1);
-        document.getElementById('party-exp').innerText = partyExp;
-        currentStage++;
-        setTimeout(() => loadStage(currentStage), 1500);
-        return;
-    }
-    
-    if (party.every(h => h.hp <= 0)) {
-        addLog(`☠️ ปาร์ตี้ของคุณพ่ายแพ้... ต้นอ่อนถูกทำลาย`, "enemy-action");
-        alert("Game Over! ลองใหม่อีกครั้ง");
-        initGame();
-        return;
-    }
-
-    const currentUnit = turnOrder[currentTurnIndex];
-    
-    if (!currentUnit || currentUnit.hp <= 0) {
-        nextTurn();
-        return;
-    }
-
-    document.getElementById('turn-indicator').innerText = `ถึงเทิร์นของ: ${currentUnit.name}`;
-
-    if (party.includes(currentUnit)) {
-        renderSkills(currentUnit);
-    } else {
-        document.getElementById('skills-container').innerHTML = '';
-        setTimeout(() => executeEnemyAI(currentUnit), 1000);
-    }
-}
-
-function nextTurn() {
-    currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
-    startTurn();
-}
-
-// --- ACTIONS ---
-function executeHeroAction(actor, skill) {
-    actor.mp -= skill.mpCost;
-    let targetEnemy = enemies.find(e => e.hp > 0);
-
-    if (skill.type === 'damage') {
-        let dmg = Math.max(1, Math.floor((actor.atk * skill.power) - (targetEnemy.def * 0.5)));
-        targetEnemy.hp -= dmg;
-        addLog(`⚔️ ${actor.name} ใช้ [${skill.name}] ใส่ ${targetEnemy.name} สร้างความเสียหาย ${dmg}`, "hero-action");
-    } else if (skill.type === 'aoe_damage') {
-        enemies.filter(e => e.hp > 0).forEach(e => {
-            let dmg = Math.max(1, Math.floor((actor.atk * skill.power) - (e.def * 0.3)));
-            e.hp -= dmg;
-            addLog(`⚡ [${skill.name}] โจมตีใส่ ${e.name} สร้างความเสียหาย ${dmg}`, "hero-action");
-        });
-    } else if (skill.type === 'buff_def') {
-        party.forEach(h => h.def += 3);
-        addLog(`🛡️ ${actor.name} ใช้ [${skill.name}] เพิ่มพลังป้องกันให้ทีม!`, "hero-action");
-    } else if (skill.type === 'heal_all') {
-        party.filter(h => h.hp > 0).forEach(h => {
-            h.hp = Math.min(h.maxHp, h.hp + skill.power);
-        });
-        addLog(`💚 ${actor.name} ใช้ [${skill.name}] ฟื้นฟู HP ให้ทั้งทีม!`, "hero-action");
-    } else if (skill.type === 'restore_mp') {
-        actor.mp = Math.min(actor.maxMp, actor.mp + skill.power);
-        addLog(`🔮 ${actor.name} ฟื้นฟู MP ${skill.power} หน่วย`, "hero-action");
-    } else if (skill.type === 'self_buff_atk') {
-        actor.atk += 5;
-        addLog(`🔥 ${actor.name} คำรามเพิ่มพลังโจมตี!`, "hero-action");
-    }
-
-    nextTurn();
-}
-
-function executeEnemyAI(enemy) {
-    const aliveParty = party.filter(h => h.hp > 0);
-    if (aliveParty.length === 0) return;
-
-    // Target lowest HP or random hero
-    const target = aliveParty[Math.floor(Math.random() * aliveParty.length)];
-    let dmg = Math.max(1, Math.floor(enemy.atk - (target.def * 0.4)));
-    target.hp -= dmg;
-
-    addLog(`💥 ${enemy.name} โจมตีใส่ ${target.name} สร้างความเสียหาย ${dmg}!`, "enemy-action");
-    nextTurn();
-}
-
-function addLog(msg, type = "") {
-    const logBox = document.getElementById('combat-log');
-    const entry = document.createElement('div');
-    entry.className = `log-entry ${type}`;
-    entry.innerText = msg;
-    logBox.prepend(entry);
-}
-
-// Start Game
-initGame();
-</script>
-</body>
-</html>
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ตำนานเมล็ดดาว ภาค 1</title>
+<style>
+body{margin:0;background:#12121f;color:#eee;font:16px/1.5 sans-serif}
+#app{max-width:640px;margin:auto;padding:12px}
+button{background:#2d2d55;color:#fff;border:1px solid #66a;border-radius:6px;padding:8px 12px;margin:3px;font:inherit;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+input{padding:8px;font:inherit;margin:6px 0;width:60%}
+.f{width:80px;height:80px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;background:#1d1d38;float:left;margin-right:10px}
+.f.s{width:56px;height:56px;float:none;margin:0 0 4px;display:block}
+.u,.e{display:inline-block;margin:4px;padding:6px;background:#1d1d38;border-radius:6px;font-size:13px;vertical-align:top;min-width:110px}
+.box{background:#1d1d38;border-radius:8px;padding:12px;overflow:auto;margin:6px 0}
+.bar{display:block;height:6px;background:#400;border-radius:3px}.bar i{display:block;height:6px;background:#4c4;border-radius:3px}
+h2{margin:6px 0}
+</style></head><body><div id="app"></div><script>
+const P={k:'#1a1a2e',w:'#fff',s:'#f2c9a0',r:'#d33',o:'#f90',y:'#fd3',g:'#4b4',G:'#284',b:'#46d',p:'#93c',P:'#526',n:'#853',e:'#aab',E:'#556',c:'#5de',m:'#f7a'};
+// สไปรต์ 10x10 วาดครึ่งซ้าย (5 คอลัมน์) แล้วสะท้อนอัตโนมัติ
+const S={
+kn:["..kkk",".keee","keeee","kssss","kskss","kssss",".ksrs","..kss",".keee","keeEE"],
+mg:["....p","...pp","..ppp",".kppp","kssss","kskss","kssss",".kwww","..kpp",".kppp"],
+rg:["..kgg",".kggg","kgggg","kgsss","kgsks","kgsss",".ksss","..kgg",".kgnn","kgnnn"],
+ly:["..ccc",".cccc","ccccc","kcsss","kskss","ksmss",".ksss","..kcc",".kccc","kmccc"],
+tk:["keeee","keeEE","keeee","kecce","keeee","keEEE","keeee",".keee","kEEEE","keeee"],
+ok:["..ggg",".gGgG","gGggG","knnnn","knknn","knnnn","kwwww",".kwww","..knn","..knn"],
+mt:[".ko..","koooo","koooo","kokoo","koomm","kwooo",".kooo","..kbb",".kbbb","kbbyy"],
+sl:[".....",".....","..kgg",".kggg","kgwgg","kgggg","kgGGG","kgggg",".kkkk","....."],
+bt:["...kk","k.kpp","kkppp","kprpp","kpppw","kkppp",".kkpp","..kkp","....k","....."],
+mu:["..krr",".krwr","krrrr","krwrr","kkkkk",".kyyy",".yyky",".kyyy",".kyyy","..kkk"],
+sp:["k....",".k..k","..kPP","k.kPr",".kPPr","kkPPP","..kPP",".k.kk","k....","....."],
+dr:["kE...","kEeee","keeee","keooe","keeee","keEEE","keeEk",".kwkw",".kwkw","..kkk"]};
+const C={},$=i=>document.getElementById(i),R=n=>Math.floor(Math.random()*n);
+const img=(k,c='f')=>{if(!C[k]){const v=document.createElement('canvas');v.width=v.height=10;const x=v.getContext('2d');
+S[k].forEach((l,y)=>[...l+[...l].reverse().join('')].forEach((q,i)=>{if(q!='.'){x.fillStyle=P[q];x.fillRect(i,y,1,1)}}));C[k]=v.toDataURL()}
+return`<img class="${c}" src="${C[k]}">`};
+const show=h=>$('app').innerHTML=h,bt=(t,f,d)=>`<button onclick="${f}"${d?' disabled':''}>${t}</button>`;
+// ===== ข้อมูล =====
+const CL={
+kn:{n:'อัศวินสุริยัน',hp:40,mp:10,atk:9,df:6,sk:['ฟันสะท้านฟ้า',4,'d',1.9]},
+mg:{n:'จอมเวทดารา',hp:28,mp:24,atk:10,df:3,sk:['ลูกไฟพิรุณ',6,'a',1.1]},
+rg:{n:'พรานเงาจันทร์',hp:32,mp:14,atk:9,df:4,sk:['ศรสามทิศ',4,'d',1.7]}};
+const CO={
+ly:{n:'ไลรา (พรายป่า)',sp:'ly',hp:30,mp:22,atk:6,df:3,sk:['ลมเยียวยา',5,'h',14]},
+tk:{n:'ต็อก (โกเลมหิน)',sp:'tk',hp:50,mp:8,atk:8,df:8,sk:['กระแทกพสุธา',5,'a',1.0]}};
+const E={
+sl:{n:'เมือกหนองบึง',hp:22,atk:7,df:1,xp:10,g:6},
+bt:{n:'ค้างคาวหมอกพิษ',hp:18,atk:9,df:1,xp:12,g:8},
+mu:{n:'เห็ดสปอร์ร่ายรำ',hp:30,atk:8,df:3,xp:15,g:9},
+sp:{n:'แมงมุมไหมเถ้า',hp:40,atk:11,df:3,xp:22,g:14},
+dr:{n:'วาเอลกอร์ มังกรเถ้าถ่าน',hp:220,atk:15,df:5,xp:120,g:100,boss:1}};
+const INTRO=()=>[[null,'ผู้บรรยาย','พันปีก่อน มังกรเถ้าถ่าน "วาเอลกอร์" กลืนแสงดาวจนโลกมืดมิด วีรชนทั้งสามใช้ "เมล็ดดาว" สามเม็ดผนึกมันไว้ใต้ซากปรักเถ้า'],
+[null,'ผู้บรรยาย','บัดนี้ต้นไม้แสงดาวแห่งหมู่บ้านโอ๊กรูมกำลังเหี่ยวเฉา ผนึกใกล้แตก'],
+['ok','เฒ่าโอ๊กรูม (เอนท์ผู้เฒ่า)',`เจ้าชื่อ ${G.name} ใช่ไหม ต้นไม้ของข้าบอกว่าเจ้าคือผู้ที่ดวงดาวเลือก`],
+['ok','เฒ่าโอ๊กรูม','ไปป่ากระซิบทางตะวันออก หาพรายป่าชื่อไลรา นางรู้ทางสู่ซากปรักเถ้า จงนำเมล็ดดาวเม็ดแรกกลับมา!']];
+const LY=[['ly','ไลรา','หยุดก่อน! ป่านี้ไม่ต้อนรับคนแปลกหน้า... เดี๋ยวนะ แสงบนตัวเจ้านั่น เมล็ดดาวเรียกหาเจ้าหรือ?'],
+['ly','ไลรา','ข้าไลรา พรายป่าแห่งป่ากระซิบ ผนึกกำลังแตก ข้าจะไปกับเจ้า แต่เจ้าต้องแข็งแกร่งพอ (เลเวล 3) ก่อนเข้าซากปรัก']];
+const TK=[[null,'ผู้บรรยาย','กลางซากปรักมีรูปปั้นหินขนาดมหึมาลุกขึ้นช้าๆ ดวงตาสีฟ้าวาบสว่าง'],
+['tk','ต็อก','ตรวจพบแสงดาว... ข้าคือต็อก โกเลมผู้เฝ้าผนึก พันปีที่ข้ารอผู้มาแทนวีรชน'],
+['tk','ต็อก','ห้องผนึกอยู่ลึกสุด แต่มังกรแข็งแกร่งนัก ฝึกให้ถึงเลเวล 5 แล้วข้าจะสู้เคียงข้างเจ้า']];
+const BI=[['dr','วาเอลกอร์','ผนึกร้าวแล้ว... กลิ่นแสงดาวหอมหวานนัก! พันปีที่ข้าหิวโหย!'],['ly','ไลรา','อย่าให้มันกินเมล็ดดาว! ทุกคนตั้งหลัก!']];
+const BO=[[null,'ผู้บรรยาย','วาเอลกอร์คำรามครั้งสุดท้ายแล้วจมลงสู่ความมืด ผนึกประสานกันอีกครั้ง เมล็ดดาวเม็ดแรกลอยขึ้นมา'],
+['tk','ต็อก','อีกสองเม็ดอยู่ไกลออกไป ทะเลทรายกระจกและยอดเขาเมฆา'],['ok','เฒ่าโอ๊กรูม','ต้นไม้ของข้าผลิใบอีกครั้งแล้ว ไปต่อเถิดวีรชน']];
+// ===== ระบบ =====
+let G,B,D;
+const mk=d=>({n:d.n,sp:d.sp,hp:d.hp,mhp:d.hp,mp:d.mp,mmp:d.mp,atk:d.atk,df:d.df,lv:1,xp:0,sk:d.sk,gd:0});
+const grow=u=>{u.lv++;u.mhp+=6;u.hp+=6;u.mmp+=2;u.mp+=2;u.atk+=2;u.df+=1};
+const join=d=>{const u=mk(d);for(let i=1;i<G.party[0].lv;i++)grow(u);return u};
+const bar=(a,b)=>`<i class=bar><i style="width:${Math.max(0,a/b*100)}%"></i></i>`;
+const m=()=>{const t=G.msg?`<p>⚠ ${G.msg}</p>`:'';G.msg='';return t};
+const st=()=>`<div>${G.party.map(u=>`<div class=u>${img(u.sp,'f s')}<b>${u.n}</b> Lv${u.lv}<br>HP ${u.hp}/${u.mhp}${bar(u.hp,u.mhp)}MP ${u.mp}/${u.mmp}</div>`).join('')}</div><p>💰${G.gold} 🧪ยา ${G.pot}</p>`;
+function title(){show(`<h2>ตำนานเมล็ดดาว<br>ภาค 1: ผนึกใต้เถ้าถ่าน</h2><p>ตั้งชื่อวีรบุรุษ แล้วเลือกคลาส</p><input id=nm placeholder="ชื่อ" maxlength=12><br>`+
+Object.keys(CL).map(k=>`<div class=u>${img(k,'f s')}<b>${CL[k].n}</b><br>HP ${CL[k].hp} MP ${CL[k].mp}<br>สกิล: ${CL[k].sk[0]}<br>${bt('เลือก',`begin('${k}')`)}</div>`).join(''))}
+function begin(c){const nm=$('nm').value.trim()||'ผู้กล้า';G={name:nm,gold:50,pot:2,fl:{},msg:'',party:[mk({...CL[c],n:nm,sp:c})]};dlg(INTRO(),village)}
+function dlg(l,cb){D={l,cb,i:0};dl()}
+function dl(){if(D.i>=D.l.length)return D.cb();const[s,n,t]=D.l[D.i++];show(`<div class=box>${s?img(s):''}<b>${n}</b><p>${t}</p></div>`+bt('ต่อไป','dl()'))}
+function village(){show(st()+`<h2>หมู่บ้านโอ๊กรูม</h2>`+m()+bt('คุยกับเฒ่าโอ๊กรูม','talk()')+bt('ร้านเมี่ยวโตะ','shop()')+bt('โรงเตี๊ยม (5 เหรียญ)','inn()')+bt('ป่ากระซิบ',"area('f')"))}
+function talk(){const f=G.fl;dlg([['ok','เฒ่าโอ๊กรูม',f.done?'เจ้าช่วยโลกไว้แล้ว ขอบใจนัก พักผ่อนเถิด':f.ly?'ซากปรักอยู่ลึกในป่า ฝึกให้ถึงเลเวล 5 ก่อนเข้าห้องผนึก':'ไปป่ากระซิบทางตะวันออก พบไลรา']],village)}
+function shop(){show(st()+`<div class=box>${img('mt')}<b>เมี่ยวโตะ</b> (เผ่าแมวพเนจร)<p>"ยาฟื้นฟู 15 เหรียญ เมี๊ยว~"</p></div>`+bt('ซื้อยา (15)','buy()',G.gold<15)+bt('กลับ','village()'))}
+function buy(){if(G.gold>=15){G.gold-=15;G.pot++}shop()}
+function inn(){if(G.gold<5)G.msg='เหรียญไม่พอ';else{G.gold-=5;G.party.forEach(u=>{u.hp=u.mhp;u.mp=u.mmp});G.msg='พักจนเต็มกำลัง'}village()}
+function area(a){G.loc=a;const f=a=='f';
+if(f&&!G.fl.ly)return dlg(LY,()=>{G.fl.ly=1;G.party.push(join(CO.ly));area('f')});
+if(!f&&!G.fl.tk)return dlg(TK,()=>{G.fl.tk=1;G.party.push(join(CO.tk));area('r')});
+show(st()+`<h2>${f?'ป่ากระซิบ':'ซากปรักเถ้า'}</h2>`+m()+bt('สำรวจ','explore()')+(f?bt('ไปซากปรักเถ้า (Lv3)','goR()')+bt('กลับหมู่บ้าน','village()'):bt(G.fl.done?'ห้องผนึกว่างเปล่า':'เข้าห้องผนึก (Lv5)','boss()',G.fl.done)+bt('กลับป่า',"area('f')")))}
+function goR(){if(G.party[0].lv<3){G.msg='อันตรายเกินไป ต้องเลเวล 3';return area('f')}area('r')}
+function explore(){const p=G.loc=='f'?['sl','bt','mu']:['bt','mu','sp'];fight(Array.from({length:R(2)+1},()=>p[R(3)]),()=>area(G.loc))}
+function boss(){if(G.party[0].lv<5){G.msg='พลังจากห้องผนึกบีบคั้น ต้องเลเวล 5';return area('r')}dlg(BI,()=>fight(['dr'],()=>dlg(BO,()=>{G.fl.done=1;end()})))}
+function end(){show(`<div class=box><h2>จบภาคที่ 1</h2><p>เมล็ดดาวเม็ดแรกถูกกู้คืน ภาคต่อไป: ภาค 2 ทะเลทรายกระจก</p></div>`+bt('เดินเล่นต่อ','village()')+bt('เริ่มใหม่','title()'))}
+// ===== ต่อสู้ =====
+const dm=(a,d,p)=>Math.max(1,Math.round((a*p-d*.5)*(.85+Math.random()*.3)));
+const weak=()=>G.party.filter(x=>x.hp>0).sort((a,b)=>a.hp/a.mhp-b.hp/b.mhp)[0];
+function fight(keys,cb){B={e:keys.map(k=>({...E[k],k,sp:k,mhp:E[k].hp})),i:0,r:1,log:['ศัตรูปรากฏตัว!'],cb};turn()}
+function turn(){while(B.i<G.party.length&&G.party[B.i].hp<=0)B.i++;if(B.i>=G.party.length)return ep();
+const u=G.party[B.i];u.gd=0;
+show(st()+`<div>${B.e.filter(e=>e.hp>0).map(e=>`<div class=e>${img(e.k,'f s')}<b>${e.n}</b>${bar(e.hp,e.mhp)}${e.hp}/${e.mhp}</div>`).join('')}</div><div class=box>${B.log.join('<br>')}</div><p>ตาของ <b>${u.n}</b></p>`+
+bt('โจมตี','pk(0)')+bt(`${u.sk[0]} (MP ${u.sk[1]})`,'pk(1)',u.mp<u.sk[1])+bt('ตั้งรับ','go(2)')+bt(`ยา (${G.pot})`,'go(3)',!G.pot))}
+function pk(t){const u=G.party[B.i],al=B.e.map((e,i)=>e.hp>0?i:-1).filter(i=>i>=0);
+if((t==0||u.sk[2]=='d')&&al.length>1)return show(st()+'<p>เลือกเป้าหมาย</p>'+al.map(i=>bt(B.e[i].n,`go(${t},${i})`)).join('')+bt('ย้อนกลับ','turn()'));
+go(t,al[0])}
+function go(t,ti){const u=G.party[B.i],L=B.log=[];
+const hit=(e,p)=>{const d=dm(u.atk,e.df,p);e.hp=Math.max(0,e.hp-d);L.push(`${u.n} โจมตี ${e.n} -${d}`+(e.hp?'':' ล้มแล้ว!'))};
+const heal=(w,n)=>{n=Math.min(n,w.mhp-w.hp);w.hp+=n;L.push(`${w.n} ฟื้น ${n} HP`)};
+if(t==0)hit(B.e[ti],1);
+else if(t==1){u.mp-=u.sk[1];const k=u.sk[2];L.push(`${u.n} ใช้ ${u.sk[0]}!`);
+if(k=='d')hit(B.e[ti],u.sk[3]);else if(k=='a')B.e.forEach(e=>e.hp>0&&hit(e,u.sk[3]));else heal(weak(),u.sk[3]+u.lv*2)}
+else if(t==2){u.gd=1;L.push(u.n+' ตั้งรับ')}
+else{G.pot--;heal(weak(),40)}
+if(B.e.every(e=>e.hp<=0))return win();B.i++;turn()}
+function ouch(e,t,p){let d=dm(e.atk,t.df,p);if(t.gd)d=Math.max(1,d>>1);t.hp=Math.max(0,t.hp-d);B.log.push(`${e.n} ทำร้าย ${t.n} -${d}`+(t.hp?'':' สลบ!'))}
+function ep(){const al=()=>G.party.filter(x=>x.hp>0);
+for(const e of B.e){if(e.hp<=0)continue;
+if(e.boss&&B.r%3==0){B.log.push(e.n+' พ่นลมหายใจเถ้า!');al().forEach(t=>ouch(e,t,.8))}
+else ouch(e,al()[R(al().length)],1);
+if(!al().length)return over()}
+B.r++;B.i=0;turn()}
+function win(){let x=0,g=0;const ms=[];B.e.forEach(e=>{x+=e.xp;g+=e.g});G.gold+=g;
+G.party.forEach(u=>{if(u.hp<=0)u.hp=Math.ceil(u.mhp/4);else{u.xp+=x;while(u.xp>=u.lv*12){u.xp-=u.lv*12;grow(u);ms.push(`${u.n} เลเวล ${u.lv}!`)}}});
+show(st()+`<div class=box><h2>ชนะ!</h2>EXP +${x} / เหรียญ +${g}<br>${ms.join('<br>')}</div>`+bt('ต่อไป','B.cb()'))}
+function over(){G.party.forEach(u=>{u.hp=u.mhp;u.mp=u.mmp});G.gold>>=1;show(`<div class=box><h2>พ่ายแพ้...</h2><p>ถูกพากลับหมู่บ้านและสูญเหรียญไปครึ่งหนึ่ง</p></div>`+bt('กลับหมู่บ้าน','village()'))}
+title();
+</script></body></html>
