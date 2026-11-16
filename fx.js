@@ -4,7 +4,7 @@ const FX=(()=>{
 const el=i=>document.getElementById(i),mkc=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c},sin=Math.sin,now=()=>performance.now();
 const COL={sword:'#fff',bow:'#ec6',fire:'#f84',wind:'#8fe',hammer:'#ccd'};
 let pops=[],sps=[],q=0,act=null,bgs={},tmp=mkc(160,75),mt=mkc(96,64),on=0,ml=0;
-const lay=o=>{const i=B.e.indexOf(o);if(i>=0){const n=B.e.length;return{x:n==1?190:n==2?[120,300][i]:[90,215,340][i],y:208+(i%2)*18,s:o.boss?150:92}}const j=G.party.indexOf(o);return{x:455+j*62,y:178+j*40,s:84}};
+const lay=o=>{const i=B.e.indexOf(o);if(i>=0){const n=B.e.length;return{x:n==1?190:n==2?[120,300][i]:[90,215,340][i],y:208+(i%2)*18,s:o.boss?150:92}}const j=G.party.indexOf(o);return{x:455+j*62,y:178+j*40,s:104}};
 function bg(a){if(bgs[a])return bgs[a];const c=mkc(160,75),x=c.getContext('2d'),r=a=='r';
 let g=x.createLinearGradient(0,0,0,40);(r?['#140c28','#5a2060','#e0703a']:['#2a3f78','#c9788a','#ffd9a0']).forEach((s,i)=>g.addColorStop(i/2,s));x.fillStyle=g;x.fillRect(0,0,160,40);
 g=x.createRadialGradient(118,28,1,118,28,22);g.addColorStop(0,r?'rgba(255,170,90,.9)':'rgba(255,240,200,.95)');g.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=g;x.fillRect(0,0,160,60);
@@ -21,12 +21,12 @@ for(let k=0;k<3;k++){const cx=((t*.008*(k+1)+k*230)%800)-80,g=x.createRadialGrad
 x.fillStyle=`rgba(255,230,170,${.05+.03*sin(t/900)})`;[420,470,530].forEach((u,k)=>{x.beginPath();x.moveTo(u,0);x.lineTo(u+50,0);x.lineTo(u-170+k*30,300);x.lineTo(u-230+k*30,300);x.fill()});
 x.fillStyle='rgba(0,0,0,.07)';for(let k=1;k<8;k++)x.fillRect(0,144+k*k*3.2,640,1+k/3);
 x.imageSmoothingEnabled=false;x.textAlign='center';
-const d=(o,k)=>{const{x:X,y:Y,s:S}=lay(o);let al=1;if(o.hp<=0){if(!o.dT)o.dT=t;al=1-(t-o.dT)/600;if(al<=0)return}else o.dT=0;
+const d=(o,k)=>{const{x:X,y:Y,s:S}=lay(o),full=G.party.includes(o),w=full?S*16/26:S,pose=act&&act.o===o&&t>=act.t0&&t-act.t0<380,spr=full?CHR.cs(o.sp,'l',pose?3:0,o===G.party[0]?G.ap:null):im(k);let al=1;if(o.hp<=0){if(!o.dT)o.dT=t;al=1-(t-o.dT)/600;if(al<=0)return}else o.dT=0;
 let ox=0;const hs=t-(o.hT||-9999);if(hs>=0&&hs<260)ox=sin(t/18)*5*(1-hs/260);
 if(act&&act.o===o){const p=(t-act.t0)/380;if(p>=0&&p<1)ox+=act.dir*sin(p*Math.PI)*46}
-x.fillStyle='rgba(0,0,0,.38)';x.beginPath();x.ellipse(X+ox,Y,S*.42,S*.1,0,0,7);x.fill();
-const yy=Y-S+8+sin(t/420+X)*1.5;x.globalAlpha=al;x.drawImage(im(k),X-S/2+ox,yy,S,S);
-if(hs>=0&&hs<200){x.globalCompositeOperation='lighter';x.globalAlpha=.5*(1-hs/200)*al;x.drawImage(im(k),X-S/2+ox,yy,S,S);x.globalCompositeOperation='source-over'}
+x.fillStyle='rgba(0,0,0,.38)';x.beginPath();x.ellipse(X+ox,Y,w*.42,S*.1,0,0,7);x.fill();
+const yy=Y-S+8+sin(t/420+X)*1.5;x.globalAlpha=al;x.drawImage(spr,X-w/2+ox,yy,w,S);
+if(hs>=0&&hs<200){x.globalCompositeOperation='lighter';x.globalAlpha=.5*(1-hs/200)*al;x.drawImage(spr,X-w/2+ox,yy,w,S);x.globalCompositeOperation='source-over'}
 x.globalAlpha=1;if(o.hp<=0)return;
 if(o.mhp&&o.wk){const v=o.dh==null?o.hp:o.dh;o.dh=v+(o.hp-v)*.12;x.fillStyle='rgba(0,0,0,.65)';x.fillRect(X-32,Y+8,64,7);x.fillStyle='#d44';x.fillRect(X-31,Y+9,62*Math.max(0,o.dh)/o.mhp,5);
 x.font='11px sans-serif';x.fillStyle='#fff';x.fillText(o.n.split(' ')[0],X,Y+27);x.fillText('🛡'+o.sh+' '+o.wk.map(w=>o.rv.includes(w)?IC[w]:'❔').join(''),X,Y+40);
@@ -45,7 +45,7 @@ else if(k=='brk'){pops.push({o,t0:t+160,txt:'BREAK!',c:'#ffb020',big:1});q=t+300
 else if(k=='heal'){if(!v)return;pops.push({o,t0:t,txt:'+'+v,c:'#6f6'});q=t+140}
 else if(k=='hurt'){o.hT=t+120;pops.push({o,t0:t+120,txt:'-'+v,c:'#f66'});q=t+260}}
 function go(){frame();if(!on){on=1;(function L(){if(!el('bc')){on=0;return}frame();requestAnimationFrame(L)})()}}
-function map(){if(ml)return;ml=1;let lt=0;(function L(t){if(!el('cv')){ml=0;return}if(t-lt>70){lt=t;draw()}requestAnimationFrame(L)})(0)}
+function map(){if(ml)return;ml=1;let lt=0;(function L(t){if(!el('cv')){ml=0;return}if(t-lt>33){lt=t;draw()}requestAnimationFrame(L)})(0)}
 function post(x,c){const t=T=now(),a=G.loc,W=480,H=320;
 if(a=='f'){x.fillStyle=`rgba(255,235,170,${.06+.03*sin(t/1100)})`;for(let k=0;k<3;k++){x.beginPath();x.moveTo(120+k*150,0);x.lineTo(170+k*150,0);x.lineTo(40+k*150,H);x.lineTo(-20+k*150,H);x.fill()}}
 x.imageSmoothingEnabled=true;amb(x,W,H,a,t);
