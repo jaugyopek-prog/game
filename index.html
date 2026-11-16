@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ตำนานเมล็ดดาว ภาค 1</title>
 <style>
-body{margin:0;background:#12121f;color:#eee;font:16px/1.5 sans-serif}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#2c2c60,#12121f 65%) fixed;color:#eee;font:16px/1.5 sans-serif}
 #app{max-width:640px;margin:auto;padding:12px}
 button{background:#2d2d55;color:#fff;border:1px solid #66a;border-radius:6px;padding:8px 12px;margin:3px;font:inherit;cursor:pointer}
 button:disabled{opacity:.4;cursor:default}
@@ -8,19 +8,21 @@ input{padding:8px;font:inherit;margin:6px 0;width:60%}
 .f{width:96px;height:96px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;background:#1d1d38;float:left;margin-right:10px}
 .f.s{width:64px;height:64px;float:none;margin:0 0 4px;display:block}
 .u,.e{display:inline-block;margin:4px;padding:6px;background:#1d1d38;border-radius:6px;font-size:13px;vertical-align:top;min-width:110px}
-.box{background:#1d1d38;border-radius:8px;padding:12px;overflow:auto;margin:6px 0}
+.box{background:linear-gradient(#24244a,#181833);border:1px solid #c4962a;border-radius:8px;box-shadow:0 2px 10px #0008;padding:12px;overflow:auto;margin:6px 0}
 .bar{display:block;height:6px;background:#400;border-radius:3px}.bar i{display:block;height:6px;background:#4c4;border-radius:3px}
 h2{margin:6px 0}
 canvas{width:100%;max-width:480px;image-rendering:pixelated;border:2px solid #66a;border-radius:6px;display:block;background:#000}
+#bc{max-width:640px}
 #pad button{width:64px;height:48px;font-size:20px}
 .shk{animation:sk .3s}@keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}.flash{animation:fl .6s}@keyframes fl{40%{background:#fd3}}
-</style></head><body><div id="app"></div><script src="art.js"></script><script src="sound.js"></script><script src="save.js"></script>
+</style></head><body><div id="app"></div><script src="art.js"></script><script src="sound.js"></script><script src="save.js"></script><script src="fx.js"></script>
 <script>
 const C={},$=i=>document.getElementById(i),R=n=>Math.floor(Math.random()*n);
 const img=(k,c='f')=>{if(!C[k]){const v=document.createElement('canvas');v.width=S[k][0].length*2;v.height=S[k].length;const x=v.getContext('2d');
 S[k].forEach((l,y)=>[...l+[...l].reverse().join('')].forEach((q,i)=>{if(q!='.'){x.fillStyle=P[q];x.fillRect(i,y,1,1)}}));C[k]=v.toDataURL()}
 return`<img class="${c}" src="${C[k]}">`};
 const sfx=n=>{try{SND.p(n)}catch(e){}},bgm=n=>{try{SND.m(n)}catch(e){}},sv=()=>{try{SAVE.put()}catch(e){}},hs=()=>{try{return SAVE.get()}catch(e){return null}};
+const bcv=()=>'<canvas id=bc width=640 height=300></canvas>',fxe=(k,o,v)=>{try{FX.ev(k,o,v)}catch(e){}},fxg=()=>{try{FX.go()}catch(e){}},fxm=()=>{try{FX.map()}catch(e){}};
 const show=h=>$('app').innerHTML=h,bt=(t,f,d)=>`<button onclick="${f}"${d?' disabled':''}>${t}</button>`;
 // ===== ข้อมูล =====
 const CL={
@@ -81,22 +83,22 @@ A.r.forEach(([x,y,w,h,c])=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)A.t[j][i
 A.o.forEach(([x,y,c])=>A.t[y][x]=c);
 [...A.p,...A.e,...A.o].forEach(([x,y])=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(i>0&&j>0&&i<A.w-1&&j<A.h-1&&A.t[j][i]=='1')A.t[j][i]='0'});
 A.p.forEach(([x,y])=>A.t[y][x]='4')}
-function showMap(){gen(G.loc);show(st()+`<h2>${AR[G.loc].n}</h2><canvas id=cv width=480 height=320></canvas><p id=mm>${G.msg}</p><div id=pad>${bt('◀','mv(-1,0)')}${bt('▲','mv(0,-1)')}${bt('▼','mv(0,1)')}${bt('▶','mv(1,0)')}</div><small>เดินด้วยลูกศร/WASD หรือปุ่มบนจอ ชนตัวละครเพื่อคุย</small>`);G.msg='';draw();bgm('map');sv()}
+function showMap(){gen(G.loc);show(st()+`<h2>${AR[G.loc].n}</h2><canvas id=cv width=480 height=320></canvas><p id=mm>${G.msg}</p><div id=pad>${bt('◀','mv(-1,0)')}${bt('▲','mv(0,-1)')}${bt('▼','mv(0,1)')}${bt('▶','mv(1,0)')}</div><small>เดินด้วยลูกศร/WASD หรือปุ่มบนจอ ชนตัวละครเพื่อคุย</small>`);G.msg='';draw();bgm('map');sv();fxm()}
 const hh=(x,y)=>((x*73856093)^(y*19349663))>>>0;
-function draw(){const c=$('cv');if(!c)return;const x=c.getContext('2d'),A=AR[G.loc],a=G.loc,cx=Math.max(0,Math.min(A.w-VW,G.x-7)),cy=Math.max(0,Math.min(A.h-VH,G.y-5));
+function draw(){const c=$('cv');if(!c||!G||!AR[G.loc].t)return;const x=c.getContext('2d'),A=AR[G.loc],a=G.loc,cx=Math.max(0,Math.min(A.w-VW,G.x-7)),cy=Math.max(0,Math.min(A.h-VH,G.y-5));
 x.imageSmoothingEnabled=false;
 const F=(col,X,Y,w,hg)=>{x.fillStyle=col;x.fillRect(X,Y,w,hg)};
 for(let j=0;j<VH;j++)for(let i=0;i<VW;i++){const gx=cx+i,gy=cy+j,t=A.t[gy][gx],px=i*TS,py=j*TS,h=hh(gx,gy),ck=(gx+gy)%2;
 if(a=='r'){F(ck?'#4d4d63':'#47475c',px,py,TS,TS);F('#3a3a4e',px,py,TS,1);F('#3a3a4e',px,py,1,TS);if(h%7==0){F('#33334a',px+6,py+8,10,1);F('#33334a',px+15,py+9,1,8)}}
 else{F(a=='f'?(ck?'#2f6b34':'#2b6330'):(ck?'#5aa04a':'#559a46'),px,py,TS,TS);
-if(h%5==0){const tc=a=='f'?'#4a9a48':'#3f7a38';F(tc,px+8,py+20,2,5);F(tc,px+11,py+22,2,4);F(tc,px+20,py+10,2,5)}
+if(h%5==0){const tc=a=='f'?'#4a9a48':'#3f7a38';F(tc,px+8+Math.round(Math.sin(T/500+gx)),py+20,2,5);F(tc,px+11,py+22,2,4);F(tc,px+20,py+10,2,5)}
 if(h%23==0)F(['#fff','#f6a','#ff6'][h%3],px+10,py+12,3,3)}
 if(t=='5'){F('#d2b27a',px,py,TS,TS);F('#b8975f',px+6+h%10,py+8,3,2);F('#b8975f',px+18,py+20+h%5,3,2)}
 else if(t=='1'){
 if(a=='r'){F('rgba(0,0,0,.25)',px+4,py+27,26,4);F('#8a8aa0',px+7,py+6,18,22);F('#a9a9c0',px+7,py+6,5,22);F('#6c6c84',px+20,py+6,5,22);F('#a9a9c0',px+5,py+3,22,5);F('#6c6c84',px+5,py+26,22,4);if(h%2)F('#4f8a4a',px+8,py+14,6,3)}
 else{x.fillStyle='rgba(0,0,0,.25)';x.beginPath();x.ellipse(px+16,py+29,12,4,0,0,7);x.fill();F('#6a4a2a',px+13,py+18,6,11);F('#4e3520',px+17,py+18,2,11);
-[['#1f5a2a',16,14,13],['#2a7a3c',12,12,9],['#3f9a4a',20,9,7]].forEach(([col,ax,ay,r])=>{x.fillStyle=col;x.beginPath();x.arc(px+ax,py+ay,r,0,7);x.fill()})}}
-else if(t=='2'){F('#2a62b8',px,py,TS,TS);F('#5a9ae8',px+4+h%8,py+10,10,2);F('#7ab4f0',px+10,py+22,8,2)}
+[['#1f5a2a',16,14,13],['#2a7a3c',12,12,9],['#3f9a4a',20,9,7]].forEach(([col,ax,ay,r])=>{x.fillStyle=col;x.beginPath();x.arc(px+ax+Math.sin(T/700+gx*1.3)*(r>8?1:2),py+ay,r,0,7);x.fill()})}}
+else if(t=='2'){F('#2a62b8',px,py,TS,TS);F('#5a9ae8',px+4+h%8+Math.round(Math.sin(T/450+h)*3),py+10,10,2);F('#7ab4f0',px+10+Math.round(Math.cos(T/520+h)*3),py+22,8,2)}
 else if(t=='3'||t=='D'){const top=!'3D'.includes((A.t[gy-1]||[])[gx]||'x'),nx=A.t[gy+1][gx],bot=nx!='3'&&nx!='D';
 if(top){F('#b8403a',px,py,TS,TS);for(let k=0;k<4;k++)F('#8c2a2a',px,py+k*8+7,TS,1);F('#d2605a',px,py,TS,2);if(h%4==0)F('#6a5a50',px+20,py+2,8,10)}
 else{F('#c9976a',px,py,TS,TS);F('#a97b52',px+10,py,1,TS);F('#a97b52',px+21,py,1,TS);
@@ -105,13 +107,13 @@ if(t=='3'&&!bot&&gx%2==0){F('#5a3a22',px+8,py+8,16,14);F('#ffe9a0',px+10,py+10,1
 if(t=='D'){F('#4a2a14',px+7,py+6,18,26);F('#fd3',px+21,py+20,2,2);F('#fd3',px+4,py,24,7);x.fillStyle='#1b1626';x.font='bold 7px sans-serif';x.fillText('INN',px+10,py+6)}}}
 else if(t=='C'){const op=G.fl['c'+a+gx+'_'+gy];F('rgba(0,0,0,.25)',px+4,py+27,24,4);F('#5a3a1e',px+5,py+11,22,16);F(op?'#2a1a10':'#8a5a30',px+5,py+11,22,6);F('#c4962a',px+5,py+17,22,2);if(!op)F('#ffd84a',px+14,py+15,4,6)}
 else if(t=='G'){const g=x.createRadialGradient(px+16,py+16,2,px+16,py+16,22);g.addColorStop(0,'#f0c0ff');g.addColorStop(1,'#5a2a7a');F('#556',px,py,TS,TS);x.fillStyle=g;x.fillRect(px+4,py+3,24,29);F('#889',px+2,py,4,TS);F('#889',px+26,py,4,TS)}
-else if(t=='4'){const g=x.createRadialGradient(px+16,py+16,1,px+16,py+16,16);g.addColorStop(0,'rgba(255,240,150,.95)');g.addColorStop(1,'rgba(255,200,60,0)');x.fillStyle=g;x.fillRect(px,py,TS,TS)}}
-const dsp=(k,gx,gy)=>{const i=gx-cx,j=gy-cy;if(i<0||j<0||i>=VW||j>=VH)return;x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(i*TS+16,j*TS+29,10,4,0,0,7);x.fill();x.drawImage(im(k),i*TS,j*TS,TS,TS)};
+else if(t=='4'){const g=x.createRadialGradient(px+16,py+16,1,px+16,py+16,14+Math.sin(T/260)*3);g.addColorStop(0,'rgba(255,240,150,.95)');g.addColorStop(1,'rgba(255,200,60,0)');x.fillStyle=g;x.fillRect(px,py,TS,TS)}}
+const dsp=(k,gx,gy)=>{const i=gx-cx,j=gy-cy;if(i<0||j<0||i>=VW||j>=VH)return;x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(i*TS+16,j*TS+29,10,4,0,0,7);x.fill();x.drawImage(im(k),i*TS,j*TS+Math.round(Math.sin(T/300+gx)*1.2),TS,TS)};
 A.e.forEach(([ex,ey,s])=>dsp(s,ex,ey));
 for(let n=G.party.length-1;n>0;n--){const p=(G.tr||[])[n-1];if(p)dsp(G.party[n].sp,p[0],p[1])}
 dsp(G.party[0].sp,G.x,G.y);
 const lx=(G.x-cx)*TS+16,ly=(G.y-cy)*TS+16,g=x.createRadialGradient(lx,ly,120,lx,ly,320);g.addColorStop(0,'rgba(0,0,30,0)');g.addColorStop(1,'rgba(0,0,30,.5)');x.fillStyle=g;x.fillRect(0,0,480,320);
-x.fillStyle={v:'rgba(255,200,120,.05)',f:'rgba(20,80,60,.14)',r:'rgba(70,20,110,.18)'}[a];x.fillRect(0,0,480,320)}
+x.fillStyle={v:'rgba(255,200,120,.05)',f:'rgba(20,80,60,.14)',r:'rgba(70,20,110,.18)'}[a];x.fillRect(0,0,480,320);try{FX.post(x,c)}catch(e){}}
 function mv(dx,dy){const A=AR[G.loc],x=G.x+dx,y=G.y+dy;if(x<0||y<0||x>=A.w||y>=A.h)return;
 const t=A.t[y][x],en=A.e.find(e=>e[0]==x&&e[1]==y);
 if(t=='C')return chest(x,y);if(en)return en[3]();if(t=='D')return inn();if(t=='G')return boss();if('123'.includes(t))return;
@@ -136,18 +138,18 @@ function fight(keys,cb){bgm(keys.includes('dr')?'boss':'battle');G.party.forEach
 function turn(){while(B.i<G.party.length&&G.party[B.i].hp<=0)B.i++;if(B.i>=G.party.length)return ep();
 const u=G.party[B.i],lim=Math.min(3,u.bp);B.bo=Math.min(B.bo,lim);
 const sb=(s,t)=>bt(`${IC[s[4]]||'✚'} ${s[0]} (MP ${s[1]})`,`pk(${t})`,u.mp<s[1]);
-show(st()+`<div>${B.e.filter(e=>e.hp>0).map(e=>`<div class="e ${e.fx||''}">${img(e.k,'f s')}<b>${e.n}</b>${bar(e.hp,e.mhp)}${e.hp}/${e.mhp}<br>🛡${e.sh} ${e.wk.map(t=>e.rv.includes(t)?IC[t]:'❔').join('')}${e.brk?' <b style=color:#fd3>BREAK</b>':''}</div>`).join('')}</div><div class=box>${B.log.join('<br>')}</div><p>ตาของ <b>${u.n}</b> · BP ${'●'.repeat(u.bp)}${'○'.repeat(5-u.bp)} · บูสต์ ${B.bo}</p>`+
-bt('บูสต์ +','bo(1)',B.bo>=lim)+bt('บูสต์ −','bo(-1)',!B.bo)+'<br>'+bt('โจมตี '+IC[u.at],'pk(0)')+sb(u.sk,1)+(u.lv>=4?sb(u.s2,4):'')+bt('ตั้งรับ (+BP)','go(2)')+bt(`ยา (${G.pot})`,'go(3)',!G.pot));B.e.forEach(e=>e.fx='');G.party.forEach(u=>u.fx='')}
+show(st()+`${bcv()}<div class=box>${B.log.join('<br>')}</div><p>ตาของ <b>${u.n}</b> · BP ${'●'.repeat(u.bp)}${'○'.repeat(5-u.bp)} · บูสต์ ${B.bo}</p>`+
+bt('บูสต์ +','bo(1)',B.bo>=lim)+bt('บูสต์ −','bo(-1)',!B.bo)+'<br>'+bt('โจมตี '+IC[u.at],'pk(0)')+sb(u.sk,1)+(u.lv>=4?sb(u.s2,4):'')+bt('ตั้งรับ (+BP)','go(2)')+bt(`ยา (${G.pot})`,'go(3)',!G.pot));B.e.forEach(e=>e.fx='');G.party.forEach(u=>u.fx='');fxg()}
 function bo(n){B.bo+=n;turn()}
 function pk(t){const u=G.party[B.i],sk=t==1?u.sk:u.s2,al=B.e.map((e,i)=>e.hp>0?i:-1).filter(i=>i>=0);
-if((t==0||(sk&&sk[2]=='d'))&&al.length>1)return show(st()+'<p>เลือกเป้าหมาย</p>'+al.map(i=>bt(`${B.e[i].n} 🛡${B.e[i].sh}`,`go(${t},${i})`)).join('')+bt('ย้อนกลับ','turn()'));
+if((t==0||(sk&&sk[2]=='d'))&&al.length>1)return (h=>{show(h);fxg()})(st()+bcv()+'<p>เลือกเป้าหมาย</p>'+al.map(i=>bt(`${B.e[i].n} 🛡${B.e[i].sh}`,`go(${t},${i})`)).join('')+bt('ย้อนกลับ','turn()'));
 go(t,al[0])}
-function go(t,ti){const u=G.party[B.i],L=B.log=[],b=(t==2||t==3)?0:B.bo,sk=t==1?u.sk:u.s2;u.bp-=b;B.bo=0;
+function go(t,ti){const u=G.party[B.i],L=B.log=[],b=(t==2||t==3)?0:B.bo,sk=t==1?u.sk:u.s2;u.bp-=b;B.bo=0;if(t==0||t==1||t==4)fxe('act',u);
 const tg=()=>B.e[ti]&&B.e[ti].hp>0?B.e[ti]:B.e.find(x=>x.hp>0);
-const hit=(e,p,ty,sd)=>{const w=e.wk.includes(ty);let d=dm(u.atk,e.df,p);if(e.brk)d=Math.round(d*1.5);if(w)d=Math.round(d*1.25);e.hp=Math.max(0,e.hp-d);e.fx='shk';sfx(w?'weak':'hit');
-if(w){if(!e.rv.includes(ty))e.rv.push(ty);if(e.sh>0&&e.hp>0){e.sh=Math.max(0,e.sh-sd);if(!e.sh){e.brk=e.boss?1:2;e.fx='flash';sfx('brk');L.push('💥 BREAK! '+e.n)}}}
+const hit=(e,p,ty,sd)=>{const w=e.wk.includes(ty);let d=dm(u.atk,e.df,p);if(e.brk)d=Math.round(d*1.5);if(w)d=Math.round(d*1.25);e.hp=Math.max(0,e.hp-d);e.fx='shk';sfx(w?'weak':'hit');fxe('hit',e,{d,w,ty});
+if(w){if(!e.rv.includes(ty))e.rv.push(ty);if(e.sh>0&&e.hp>0){e.sh=Math.max(0,e.sh-sd);if(!e.sh){e.brk=e.boss?1:2;e.fx='flash';sfx('brk');fxe('brk',e);L.push('💥 BREAK! '+e.n)}}}
 L.push(`${u.n} ${IC[ty]||''} ${e.n} -${d}`+(w?' ✦จุดอ่อน':'')+(e.hp?'':' ล้มแล้ว!'))};
-const heal=(w,n)=>{n=Math.min(n,w.mhp-w.hp);w.hp+=n;sfx('heal');L.push(`${w.n} ฟื้น ${n} HP`)};
+const heal=(w,n)=>{n=Math.min(n,w.mhp-w.hp);w.hp+=n;sfx('heal');fxe('heal',w,n);L.push(`${w.n} ฟื้น ${n} HP`)};
 if(t==0){for(let i=0;i<=b;i++){const e=tg();if(e)hit(e,1,u.at,1)}}
 else if(t==2){u.gd=1;u.bp=Math.min(5,u.bp+1);L.push(u.n+' ตั้งรับ (+1 BP)')}
 else if(t==3){G.pot--;heal(weak(),40)}
@@ -158,7 +160,7 @@ else if(k=='h')heal(weak(),Math.round((sk[3]+u.lv*2)*m));
 else if(k=='H')G.party.forEach(x=>x.hp>0&&heal(x,Math.round((sk[3]+u.lv)*m)));
 else G.party.forEach(x=>{x.gd=1})}
 if(B.e.every(e=>e.hp<=0))return win();B.i++;turn()}
-function ouch(e,t,p){let d=dm(e.atk,t.df,p);if(t.gd)d=Math.max(1,d>>1);t.hp=Math.max(0,t.hp-d);t.fx='shk';sfx('hurt');B.log.push(`${e.n} ทำร้าย ${t.n} -${d}`+(t.hp?'':' สลบ!'))}
+function ouch(e,t,p){fxe('atk',e);let d=dm(e.atk,t.df,p);if(t.gd)d=Math.max(1,d>>1);t.hp=Math.max(0,t.hp-d);t.fx='shk';sfx('hurt');fxe('hurt',t,d);B.log.push(`${e.n} ทำร้าย ${t.n} -${d}`+(t.hp?'':' สลบ!'))}
 function ep(){const al=()=>G.party.filter(x=>x.hp>0);
 for(const e of B.e){if(e.hp<=0)continue;
 if(e.brk){e.brk--;B.log.push(e.n+' ติด BREAK ขยับไม่ได้!');if(!e.brk)e.sh=e.msh;continue}
