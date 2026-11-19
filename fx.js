@@ -21,7 +21,7 @@ for(let k=0;k<3;k++){const cx=((t*.008*(k+1)+k*230)%800)-80,g=x.createRadialGrad
 x.fillStyle=`rgba(255,230,170,${.05+.03*sin(t/900)})`;[420,470,530].forEach((u,k)=>{x.beginPath();x.moveTo(u,0);x.lineTo(u+50,0);x.lineTo(u-170+k*30,300);x.lineTo(u-230+k*30,300);x.fill()});
 x.fillStyle='rgba(0,0,0,.07)';for(let k=1;k<8;k++)x.fillRect(0,144+k*k*3.2,640,1+k/3);
 x.imageSmoothingEnabled=false;x.textAlign='center';
-const d=(o,k)=>{const{x:X,y:Y,s:S}=lay(o),full=G.party.includes(o),w=full?S*16/26:S,pose=act&&act.o===o&&t>=act.t0&&t-act.t0<380,spr=full?CHR.cs(o.sp,'l',pose?3:0,o===G.party[0]?G.ap:null):im(k);let al=1;if(o.hp<=0){if(!o.dT)o.dT=t;al=1-(t-o.dT)/600;if(al<=0)return}else o.dT=0;
+const d=(o,k)=>{const{x:X,y:Y,s:S}=lay(o),full=G.party.includes(o),w=full?S*16/26:S,pose=act&&act.o===o&&t>=act.t0&&t-act.t0<380,spr=full?CHR.cs(o.sp,'l',pose?3:0,o===G.party[0]?G.ap:null,(WP[o.wp]||{}).c):im(k);let al=1;if(o.hp<=0){if(!o.dT)o.dT=t;al=1-(t-o.dT)/600;if(al<=0)return}else o.dT=0;
 let ox=0;const hs=t-(o.hT||-9999);if(hs>=0&&hs<260)ox=sin(t/18)*5*(1-hs/260);
 if(act&&act.o===o){const p=(t-act.t0)/380;if(p>=0&&p<1)ox+=act.dir*sin(p*Math.PI)*46}
 x.fillStyle='rgba(0,0,0,.38)';x.beginPath();x.ellipse(X+ox,Y,w*.42,S*.1,0,0,7);x.fill();
