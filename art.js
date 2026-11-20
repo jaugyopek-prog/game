@@ -25,3 +25,10 @@ dw:["...kkkkk","..kEeeee",".kEeeWee",".kEEEEEE",".kssssss",".kswksss",".kssssrr"
 fx:[".kw.....",".kssS...",".ksssssS","kssssssS","ksswksss","ksssswww",".ksswwwk",".kswwwww","..kswwww","...kkwww",...SHD('G','g','y',6)],
 ow:[".kk.....",".kssssss","ksssssss","kswwwwww","kswkwwww","kswwwwww","kssssyyy",".kssssyy","..ksssss","...kkSSS",...SHD('B','b','y',6)],
 rb:[".kwk....",".kmk....",".kmk.kss",".kssssss","ksssssss","ksswksss","ksssssmm",".ksssSRR","..ksssss","...kksss","....kkkk",...SHD('R','m','w',5)]});
+
+// มอนสเตอร์ทะเลทรายกระจก: sc=แมงป่อง gl=โกเลมผลึก cb=งูเห่า wd=วิญญาณพายุทราย
+Object.assign(S,{
+sc:["......kk",".....kRR",".....kyo","kk...koo","kok..kon","kook.koo","kooookoo",".kkoooon","..kooron","..koooon",".koooooo","kkoonnnn","k.kooonn","k.k.kkoo","....k.kk","........"],
+gl:["...k...k","..kck.kc",".kcccwcc",".kccmmcc",".kccccCc","..kkkkkk",".kccwcCC","kcccwcCC","kccccCCC","kcCccCCC","kkcCCCCC",".kcCkCCC",".kccCkCC",".kcCCkCC",".kkkkkkk","........"],
+cb:["...kkkkk",".kkyyyyy","kyyYyyYy","kyYyyWWW","kyyyWkWW","kyYyWWWW",".kyyyWrr",".kkyyyWW","..kkyyyy","...kyyYy","...kyyyy","..kyyYyy",".kyyyyyy","kyyYyyYy",".kkyyyyy","...kkkkk"],
+wd:["....kkkk","...kBBBB","..kBBbBB",".kBBbbBB",".kBkkkkk",".kBkyykk",".kBkkkkk",".kBBkkkk","kBBbBBBB","kBbBBbBB","kBBBBBBB","kBbBBbBB","kBBBbBBB","kkBBkBBk",".k.kk.kk","........"]});
