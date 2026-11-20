@@ -60,7 +60,7 @@ t1:{n:'ไม้เท้าโอ๊ก',t:'staff',a:0,p:0},t2:{n:'ไม้เ
 b1:{n:'ธนูฝึกหัด',t:'bow',a:0,p:0},b2:{n:'ธนูล่าเงา',t:'bow',a:3,p:60,x:'crit',c:'#c8f'},b3:{n:'ธนูเพลิงดาว',t:'bow',a:5,p:150,x:'fire',c:'#f84'},
 w1:{n:'คฑาไม้ผลิ',t:'wand',a:0,p:0},w2:{n:'คฑาแสงจันทร์',t:'wand',a:2,p:60,x:'heal',c:'#cfe'},w3:{n:'คฑาลมศักดิ์สิทธิ์',t:'wand',a:4,p:140,x:'mp',c:'#8fe'},
 h1:{n:'ค้อนหินฝึก',t:'hammer',a:0,p:0},h2:{n:'ค้อนทุบเกราะ',t:'hammer',a:3,p:60,x:'brk',c:'#fb8'},h3:{n:'ค้อนพสุธา',t:'hammer',a:5,p:150,x:'crit',c:'#fd6'}};
-const CHW={cf19_12:'b2',cf5_4:'s4',cf12_13:'h2',cr10_3:'s3',cr5_10:'t3'};
+const CHW={cv2_24:'w2',cf19_12:'b2',cf5_4:'s4',cf12_13:'h2',cr10_3:'s3',cr5_10:'t3'};
 const W=u=>WP[u.wp]||{};
 // ===== ระบบ =====
 let G,B,D,AP={s:0,t:0};
@@ -76,7 +76,7 @@ function ap(w,i){AP[w]=i;const v=$('nm').value;title();$('nm').value=v}
 function title(){show(`<h2>ตำนานเมล็ดดาว<br>ภาค 1: ผนึกใต้เถ้าถ่าน</h2>${hs()?bt('▶ เล่นต่อจากเซฟ (Lv'+hs().party[0].lv+')','cont()'):''}<p>ตั้งชื่อวีรบุรุษ แล้วเลือกคลาส</p><input id=nm placeholder="ชื่อ" maxlength=12><br>${sw()}`+
 Object.keys(CL).map(k=>`<div class=u>${pv(k)}<b>${CL[k].n}</b><br>HP ${CL[k].hp} MP ${CL[k].mp}<br>สกิล: ${CL[k].sk[0]}<br>${bt('เลือก',`begin('${k}')`)}</div>`).join(''))}
 function cont(){G=hs();G.msg='';G.tr=[];G.inv=G.inv||[];G.eth=G.eth||0;G.party.forEach(u=>{if(!u.wp){const d={kn:['sword','s1'],mg:['staff','t1'],rg:['bow','b1'],ly:['wand','w1'],tk:['hammer','h1']}[u.sp];u.wt=d[0];u.wp=d[1]}});showMap()}
-function begin(c){const nm=$('nm').value.trim()||'ผู้กล้า';G={inv:[],eth:1,ap:{...AP},fd:'d',stp:0,mt:0,name:nm,gold:50,pot:2,fl:{},msg:'',loc:'v',x:10,y:7,st:0,tr:[],party:[mk({...CL[c],n:nm,sp:c})]};dlg(INTRO(),village)}
+function begin(c){const nm=$('nm').value.trim()||'ผู้กล้า';G={inv:[],eth:1,ap:{...AP},fd:'d',stp:0,mt:0,name:nm,gold:50,pot:2,fl:{},msg:'',loc:'v',x:17,y:11,st:0,tr:[],party:[mk({...CL[c],n:nm,sp:c})]};dlg(INTRO(),village)}
 function dlg(l,cb){D={l,cb,i:0};dl()}
 function dl(){if(D.i>=D.l.length)return D.cb();const[s,n,t,cg]=D.l[D.i++];if(cg)D.cg=cg;show((D.cg?'<canvas id=cg width=640 height=260></canvas>':'')+`<div class=box>${s?img(s):''}<b>${n}</b><p>${t}</p></div>`+bt('ต่อไป','dl()'));if(D.cg)try{CG.go(D.cg)}catch(e){}}
 function talk(){const f=G.fl;dlg([['ok','เฒ่าโอ๊กรูม',f.done?'เจ้าช่วยโลกไว้แล้ว ขอบใจนัก พักผ่อนเถิด':f.ly?'ซากปรักอยู่ลึกในป่า ฝึกให้ถึงเลเวล 5 ก่อนเข้าห้องผนึก':'ไปป่ากระซิบทางตะวันออก พบไลรา']],village)}
@@ -94,8 +94,21 @@ function inn(){if(G.gold<5)G.msg='เหรียญไม่พอ';else{G.gold
 function end(){show(`<div class=box><h2>จบภาคที่ 1</h2><p>เมล็ดดาวเม็ดแรกถูกกู้คืน ภาคต่อไป: ภาค 2 ทะเลทรายกระจก</p></div>`+bt('เดินเล่นต่อ','village()')+bt('เริ่มใหม่','title()'))}
 // ===== แผนที่เดินสำรวจ =====
 const AR={
-v:{n:'หมู่บ้านโอ๊กรูม',w:20,h:13,g:'#4a8a3a',l:0,r:[[1,6,18,1,'5'],[4,5,1,1,'5'],[2,2,5,3,'3'],[13,2,5,3,'3'],[8,8,4,2,'2']],o:[[4,4,'D'],[17,10,'C']],e:[[9,6,'ok',()=>talk()],[15,6,'mt',()=>shop()]],p:[[19,6,'f',1,8]]},
-f:{n:'ป่ากระซิบ',w:24,h:16,g:'#2f6b34',l:1,pool:['sl','bt','mu'],r:[],o:[[5,4,'C'],[19,12,'C'],[12,13,'C']],e:[],p:[[0,8,'v',18,6],[23,8,'r',1,7]]},
+v:{n:'หมู่บ้านโอ๊กรูม',w:36,h:26,g:'#4a8a3a',l:0,
+r:[[1,7,34,2,'5'],[1,12,34,2,'5'],[17,9,2,15,'5'],[13,9,11,8,'6'],[3,3,5,3,'3'],[10,3,5,3,'3'],[17,3,7,3,'3'],[27,3,5,3,'3'],[3,18,5,3,'3'],[10,18,5,3,'3'],[26,17,6,4,'3'],[5,14,4,3,'2'],[26,22,8,1,'F'],[26,23,1,2,'F'],[33,23,1,2,'F'],[27,23,6,2,'7']],
+o:[[20,5,'D'],[5,5,'H'],[12,5,'H'],[29,5,'H'],[5,20,'H'],[12,20,'H'],[29,20,'H'],[22,21,'C'],[2,24,'C']],
+e:[[15,10,'ok',()=>talk()],[29,10,'mt',()=>shop()]],
+q:[[18,12,'O'],[13,9,'L'],[23,9,'L'],[13,16,'L'],[23,16,'L'],[8,9,'L'],[28,13,'L'],[28,9,'X'],[29,9,'X'],[30,9,'X'],[27,10,'X'],[31,10,'X'],
+[2,9,'1'],[3,10,'1'],[4,10,'1'],[8,10,'1'],[9,10,'1'],[33,9,'1'],[33,10,'1'],[24,22,'1'],[14,23,'1'],[15,23,'1'],[21,23,'1'],[22,23,'1'],[20,18,'1'],[21,19,'1'],[1,20,'1'],[1,21,'1'],[34,20,'1'],[34,18,'1'],[10,15,'1'],[11,15,'1'],
+[8,6,'B'],[15,6,'B'],[24,6,'B'],[32,6,'B'],[2,16,'B'],[10,16,'B'],[11,16,'B'],[24,18,'B'],[24,19,'B'],[16,19,'B'],[19,21,'B'],[6,10,'7'],[7,10,'7'],[25,15,'7'],[26,15,'7'],[5,6,'5'],[12,6,'5'],[20,6,'5']],
+N:[['fx','ฟิน (จิ้งจอกน้อย)',19,14,4,['พี่ๆ! ในป่ากระซิบมีหีบสมบัติซ่อนอยู่หลายใบนะ ข้าเห็นกับตา!','ข้าอยากเป็นนักผจญภัยเหมือนพี่... แต่แม่บอกให้ช่วยเก็บผักก่อน','กลางคืนเมล็ดดาวบนต้นไม้เรืองแสงสวยมาก แต่ตอนนี้มันริบหรี่แล้ว...']],
+['dw','บรุนโต (คนแคระช่างตีเหล็ก)',22,19,2,['ข้าตีอาวุธทุกชิ้นที่เมี่ยวโตะขายเอง! ดาบเหล็กกล้าเนี่ยของดีเลย','ศัตรูแต่ละตัวมีจุดอ่อนต่างกัน พกอาวุธหลายธาตุไว้เสมอ','อาวุธสำรองที่ไม่ใช้แล้ว ขายให้เมี่ยวโตะได้ครึ่งราคานะ']],
+['ow','ฮูกา (นกฮูกนักปราชญ์)',12,8,3,['เมล็ดดาวทั้งสามคือ แสง ลม และศิลา ข้าอ่านเจอในตำราเก่า','วาเอลกอร์ถูกผนึกด้วยเมล็ดดาว... ถ้าผนึกแตก ไฟจะลามทั้งแผ่นดิน','ตำรากล่าวว่ามังกรตัวนั้นกลัวไฟ ดาบ และลมพายุ จดไว้นะ']],
+['rb','ลูน่า (สาวกระต่าย)',10,14,3,['ท่านเฒ่าโอ๊กรูมนั่งมองต้นไม้ทุกวัน... ข้าเป็นห่วงท่านจริงๆ','บ่อน้ำนี้เมื่อก่อนใสมาก แต่ตอนนี้มืดลงตามต้นไม้','ถ้าเจอไลราพรายป่า ฝากบอกว่าข้าคิดถึงนางนะ']],
+['mt','ป้าเหมียว (แมวพเนจร)',24,21,2,['โรงเตี๊ยมคิด 5 เหรียญ นอนแล้วหายเหนื่อยเป็นปลิดทิ้ง','เมี่ยวโตะลูกข้าเอง ขี้เหนียวหน่อยแต่ของเขาดีนะ','ได้ยินว่าในซากปรักเถ้ามีหีบอาวุธเก่าซ่อนอยู่']],
+['ok','หน่อไม้ (เอนท์น้อย)',30,21,1,['ข้าปลูกผักให้ท่านเฒ่า... ปีนี้พวกมันไม่ค่อยงอกเลย','เสียงจากรากต้นไม้ใหญ่... มันกระซิบว่ากลัว','ถ้าไปซากปรักเถ้า ระวังมังกรด้วยนะ']]],
+p:[[35,12,'f',1,8]]},
+f:{n:'ป่ากระซิบ',w:24,h:16,g:'#2f6b34',l:1,pool:['sl','bt','mu'],r:[],o:[[5,4,'C'],[19,12,'C'],[12,13,'C']],e:[],p:[[0,8,'v',34,12],[23,8,'r',1,7]]},
 r:{n:'ซากปรักเถ้า',w:20,h:14,g:'#4a4a5e',l:1,pool:['bt','mu','sp'],r:[],o:[[17,7,'G'],[10,3,'C'],[5,10,'C']],e:[],p:[[0,7,'f',22,8]]}};
 const TS=32,VW=15,VH=10,IM={};
 const im=k=>{if(!IM[k]){img(k);IM[k]=new Image();IM[k].onload=()=>$('cv')&&draw();IM[k].src=C[k]}return IM[k]};
@@ -105,11 +118,11 @@ for(let y=0;y<A.h;y++){A.t.push([]);for(let x=0;x<A.w;x++)A.t[y].push(x*y==0||x=
 A.r.forEach(([x,y,w,h,c])=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)A.t[j][i]=c});
 A.o.forEach(([x,y,c])=>A.t[y][x]=c);
 [...A.p,...A.e,...A.o].forEach(([x,y])=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(i>0&&j>0&&i<A.w-1&&j<A.h-1&&A.t[j][i]=='1')A.t[j][i]='0'});
-A.p.forEach(([x,y])=>A.t[y][x]='4')}
-function showMap(){gen(G.loc);show(st()+`<h2>${AR[G.loc].n}</h2><canvas id=cv width=480 height=320></canvas><p id=mm>${G.msg}</p><div id=pad>${bt('◀','mv(-1,0)')}${bt('▲','mv(0,-1)')}${bt('▼','mv(0,1)')}${bt('▶','mv(1,0)')}</div>${bt('🎒 อุปกรณ์','equip()')}<br><small>เดินด้วยลูกศร/WASD หรือปุ่มบนจอ ชนตัวละครเพื่อคุย</small>`);G.msg='';draw();bgm('map');sv();fxm()}
+A.p.forEach(([x,y])=>A.t[y][x]='4');(A.q||[]).forEach(([x,y,c])=>A.t[y][x]=c);A.n=(A.N||[]).map(([k,nm,x,y,r,L])=>({k,nm,x,y,hx:x,hy:y,r,L,fd:'d',px:x,py:y,mt:0,nt:0,i:0}))}
+function showMap(){gen(G.loc);show(st()+`<h2>${AR[G.loc].n}</h2><canvas id=cv width=480 height=320></canvas><p id=mm>${G.msg}</p><div id=pad>${bt('◀','mv(-1,0)')}${bt('▲','mv(0,-1)')}${bt('▼','mv(0,1)')}${bt('▶','mv(1,0)')}</div>${bt('💬 คุย','act()')}${bt('🎒 อุปกรณ์','equip()')}<br><small>เดินด้วยลูกศร/WASD · กด E / Enter / Space หรือปุ่ม 💬 เพื่อคุยกับคนที่อยู่ใกล้</small>`);G.msg='';draw();bgm('map');sv();fxm()}
 const hh=(x,y)=>((x*73856093)^(y*19349663))>>>0;
 function draw(){const c=$('cv');if(!c||!G||!AR[G.loc].t)return;const x=c.getContext('2d'),A=AR[G.loc],a=G.loc,t0=performance.now(),mt=Math.min(1,(t0-(G.mt||0))/130),lp=(p,q)=>[p[0]+(q[0]-p[0])*mt,p[1]+(q[1]-p[1])*mt],P0=lp((G.tr||[])[0]||[G.x,G.y],[G.x,G.y]),cxf=Math.max(0,Math.min(A.w-VW,P0[0]-7)),cyf=Math.max(0,Math.min(A.h-VH,P0[1]-5)),cx=Math.floor(cxf),cy=Math.floor(cyf),ox=Math.round((cxf-cx)*TS),oy=Math.round((cyf-cy)*TS);
-x.imageSmoothingEnabled=false;
+x.imageSmoothingEnabled=false;npcStep(t0);
 const F=(col,X,Y,w,hg)=>{x.fillStyle=col;x.fillRect(X,Y,w,hg)};
 for(let j=0;j<=VH;j++)for(let i=0;i<=VW;i++){const gx=cx+i,gy=cy+j;if(gx>=A.w||gy>=A.h)continue;const t=A.t[gy][gx],px=i*TS-ox,py=j*TS-oy,h=hh(gx,gy),ck=(gx+gy)%2;
 if(a=='r'){F(ck?'#4d4d63':'#47475c',px,py,TS,TS);F('#3a3a4e',px,py,TS,1);F('#3a3a4e',px,py,1,TS);if(h%7==0){F('#33334a',px+6,py+8,10,1);F('#33334a',px+15,py+9,1,8)}}
@@ -122,25 +135,42 @@ if(a=='r'){F('rgba(0,0,0,.25)',px+4,py+27,26,4);F('#8a8aa0',px+7,py+6,18,22);F('
 else{x.fillStyle='rgba(0,0,0,.25)';x.beginPath();x.ellipse(px+16,py+29,12,4,0,0,7);x.fill();F('#6a4a2a',px+13,py+18,6,11);F('#4e3520',px+17,py+18,2,11);
 [['#1f5a2a',16,14,13],['#2a7a3c',12,12,9],['#3f9a4a',20,9,7]].forEach(([col,ax,ay,r])=>{x.fillStyle=col;x.beginPath();x.arc(px+ax+Math.sin(T/700+gx*1.3)*(r>8?1:2),py+ay,r,0,7);x.fill()})}}
 else if(t=='2'){F('#2a62b8',px,py,TS,TS);F('#5a9ae8',px+4+h%8+Math.round(Math.sin(T/450+h)*3),py+10,10,2);F('#7ab4f0',px+10+Math.round(Math.cos(T/520+h)*3),py+22,8,2)}
-else if(t=='3'||t=='D'){const top=!'3D'.includes((A.t[gy-1]||[])[gx]||'x'),nx=A.t[gy+1][gx],bot=nx!='3'&&nx!='D';
+else if('3DH'.includes(t)){const top=!'3DH'.includes((A.t[gy-1]||[])[gx]||'x'),nx=A.t[gy+1][gx],bot=!'3DH'.includes(nx);
 if(top){F('#b8403a',px,py,TS,TS);for(let k=0;k<4;k++)F('#8c2a2a',px,py+k*8+7,TS,1);F('#d2605a',px,py,TS,2);if(h%4==0)F('#6a5a50',px+20,py+2,8,10)}
 else{F('#c9976a',px,py,TS,TS);F('#a97b52',px+10,py,1,TS);F('#a97b52',px+21,py,1,TS);
 if(bot)F('#7a5a40',px,py+26,TS,6);
 if(t=='3'&&!bot&&gx%2==0){F('#5a3a22',px+8,py+8,16,14);F('#ffe9a0',px+10,py+10,12,10);F('#5a3a22',px+15,py+10,2,10)}
-if(t=='D'){F('#4a2a14',px+7,py+6,18,26);F('#fd3',px+21,py+20,2,2);F('#fd3',px+4,py,24,7);x.fillStyle='#1b1626';x.font='bold 7px sans-serif';x.fillText('INN',px+10,py+6)}}}
+if(t=='D'||t=='H'){F('#4a2a14',px+7,py+6,18,26);F('#fd3',px+21,py+20,2,2);if(t=='D'){F('#fd3',px+4,py,24,7);x.fillStyle='#1b1626';x.font='bold 7px sans-serif';x.fillText('INN',px+10,py+6)}}}}
+else if(t=='6'){F(ck?'#a9a9ba':'#a0a0b2',px,py,TS,TS);F('#8a8a9c',px,py+15,TS,1);F('#8a8a9c',px+(h%2?10:20),py,1,TS);F('#bcbccb',px+3,py+3,5,3)}
+else if(t=='7'){for(let k=0;k<5;k++){F(['#fff','#f6a','#ff6','#9cf','#f96'][(h+k)%5],px+4+(k*7+h)%22,py+5+(k*11+h*3)%20,3,3);F('#2a7a3c',px+5+(k*7+h)%22,py+8+(k*11+h*3)%20,1,3)}}
+else if(t=='F'){F('rgba(0,0,0,.2)',px,py+26,TS,3);F('#a9794a',px,py+12,TS,3);F('#a9794a',px,py+20,TS,3);F('#7a5230',px+3,py+8,4,18);F('#7a5230',px+25,py+8,4,18)}
+else if(t=='B'){x.fillStyle='rgba(0,0,0,.25)';x.beginPath();x.ellipse(px+16,py+27,12,4,0,0,7);x.fill();[['#1f6a2a',12,18,10],['#2a8a3a',21,18,9],['#3fa84a',16,13,9]].forEach(([c2,ax,ay,r])=>{x.fillStyle=c2;x.beginPath();x.arc(px+ax,py+ay,r,0,7);x.fill()});if(h%3==0)F('#f6a',px+14,py+12,3,3)}
+else if(t=='L'){F('rgba(0,0,0,.25)',px+8,py+27,16,3);F('#3a3040',px+14,py+10,4,20);F('#3a3040',px+10,py+28,12,3);const g=x.createRadialGradient(px+16,py+8,1,px+16,py+8,26+Math.sin(T/200+gx)*2);g.addColorStop(0,'rgba(255,225,130,.8)');g.addColorStop(1,'rgba(255,200,80,0)');x.fillStyle=g;x.fillRect(px-10,py-18,52,52);F('#ffe49a',px+11,py+4,10,9);F('#3a3040',px+10,py+2,12,3)}
+else if(t=='O'){F('rgba(0,0,0,.25)',px+2,py+27,28,4);F('#8a8a9a',px+4,py+14,24,15);F('#6a6a7c',px+4,py+14,24,3);F('#2a62b8',px+8,py+14,16,5);F('#5a3a22',px+5,py+2,3,14);F('#5a3a22',px+24,py+2,3,14);F('#b8403a',px+2,py,28,6)}
+else if(t=='X'){F('rgba(0,0,0,.25)',px+3,py+28,26,3);if(h%2){F('#8a5a30',px+4,py+12,24,17);F('#5a3a1e',px+4,py+19,24,2);F('#5a3a1e',px+15,py+12,2,17)}else{F('#946038',px+6,py+10,20,19);F('#5a3a1e',px+6,py+14,20,2);F('#5a3a1e',px+6,py+23,20,2)}}
 else if(t=='C'){const op=G.fl['c'+a+gx+'_'+gy];F('rgba(0,0,0,.25)',px+4,py+27,24,4);F('#5a3a1e',px+5,py+11,22,16);F(op?'#2a1a10':'#8a5a30',px+5,py+11,22,6);F('#c4962a',px+5,py+17,22,2);if(!op)F('#ffd84a',px+14,py+15,4,6)}
 else if(t=='G'){const g=x.createRadialGradient(px+16,py+16,2,px+16,py+16,22);g.addColorStop(0,'#f0c0ff');g.addColorStop(1,'#5a2a7a');F('#556',px,py,TS,TS);x.fillStyle=g;x.fillRect(px+4,py+3,24,29);F('#889',px+2,py,4,TS);F('#889',px+26,py,4,TS)}
 else if(t=='4'){const g=x.createRadialGradient(px+16,py+16,1,px+16,py+16,14+Math.sin(T/260)*3);g.addColorStop(0,'rgba(255,240,150,.95)');g.addColorStop(1,'rgba(255,200,60,0)');x.fillStyle=g;x.fillRect(px,py,TS,TS)}}
 const dsp=(k,gx,gy,ap,dr,fr)=>{const X=(gx-cxf)*TS+16,Y=(gy-cyf+1)*TS-3;if(X<-40||Y<0||X>520||Y>420)return;x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(X,Y-1,11,4,0,0,7);x.fill();x.drawImage(CHR.cs(k,dr,fr,ap),X-16,Y-52+(fr?0:Math.round(Math.sin(T/300+gx)*1.2)),32,52)};
 const fr=mt<1?(G.stp%2?1:2):0,dr=G.fd||'d',L=[];
 A.e.forEach(([ex,ey,s])=>L.push([ey,s,ex,ey,null,'d',0]));
+(A.n||[]).forEach(q=>{const m=Math.min(1,(t0-q.mt)/380),X=q.px+(q.x-q.px)*m,Y=q.py+(q.y-q.py)*m;L.push([Y,q.k,X,Y,null,q.fd,m<1?(Math.floor(t0/180)%2?1:2):0])});
 for(let n=G.party.length-1;n>0;n--){const q=(G.tr||[])[n-1];if(q){const p=lp((G.tr||[])[n]||q,q);L.push([p[1],G.party[n].sp,p[0],p[1],null,dr,fr])}}
 L.push([P0[1],G.party[0].sp,P0[0],P0[1],G.ap,dr,fr]);L.sort((p,q)=>p[0]-q[0]).forEach(e=>dsp(...e.slice(1)));
 const lx=(P0[0]-cxf)*TS+16,ly=(P0[1]-cyf)*TS+16,g=x.createRadialGradient(lx,ly,120,lx,ly,320);g.addColorStop(0,'rgba(0,0,30,0)');g.addColorStop(1,'rgba(0,0,30,.5)');x.fillStyle=g;x.fillRect(0,0,480,320);
 x.fillStyle={v:'rgba(255,200,120,.05)',f:'rgba(20,80,60,.14)',r:'rgba(70,20,110,.18)'}[a];x.fillRect(0,0,480,320);try{FX.post(x,c)}catch(e){}}
+const BLK='123FBLOXDGCH4';
+function npcStep(t=performance.now()){const A=AR[G.loc];if(!A.n)return;A.n.forEach(q=>{if(t<q.nt)return;q.nt=t+1200+R(2600);if(!q.r)return;
+const d=[[1,0,'r'],[-1,0,'l'],[0,1,'d'],[0,-1,'u']][R(4)],x=q.x+d[0],y=q.y+d[1];
+if(Math.abs(x-q.hx)>q.r||Math.abs(y-q.hy)>q.r||x<0||y<0||x>=A.w||y>=A.h||BLK.includes(A.t[y][x])||(x==G.x&&y==G.y)||A.n.some(o=>o!==q&&o.x==x&&o.y==y)||A.e.some(e=>e[0]==x&&e[1]==y))return;
+q.px=q.x;q.py=q.y;q.x=x;q.y=y;q.mt=t;q.fd=d[2]})}
+function act(){const A=AR[G.loc],f={l:[-1,0],r:[1,0],u:[0,-1],d:[0,1]}[G.fd||'d'],n1=A.n||[],ad=(a,b)=>Math.abs(a-G.x)+Math.abs(b-G.y)==1;
+const h=n1.find(q=>q.x==G.x+f[0]&&q.y==G.y+f[1])||n1.find(q=>ad(q.x,q.y))||A.e.find(e=>ad(e[0],e[1]));
+if(!h)return say('ไม่มีใครอยู่ใกล้พอให้คุยด้วย');if(Array.isArray(h))return h[3]();
+const dx=G.x-h.x,dy=G.y-h.y;h.fd=Math.abs(dx)>Math.abs(dy)?(dx<0?'l':'r'):(dy<0?'u':'d');h.nt=performance.now()+5000;const i=h.i||0;h.i=(i+1)%h.L.length;dlg([[h.k,h.nm,h.L[i]]],showMap)}
 function mv(dx,dy){const A=AR[G.loc],x=G.x+dx,y=G.y+dy;if(x<0||y<0||x>=A.w||y>=A.h)return;G.fd=dx<0?'l':dx>0?'r':dy<0?'u':'d';
 const t=A.t[y][x],en=A.e.find(e=>e[0]==x&&e[1]==y);
-if(t=='C')return chest(x,y);if(en)return en[3]();if(t=='D')return inn();if(t=='G')return boss();if('123'.includes(t))return;
+if(t=='C')return chest(x,y);if(en)return en[3]();if(t=='D')return inn();if(t=='H')return say('ประตูล็อกอยู่ ได้ยินเสียงคนข้างใน');if(t=='G')return boss();if('123FBLOX'.includes(t)||(A.n||[]).some(q=>q.x==x&&q.y==y))return;
 const p=A.p.find(q=>q[0]==x&&q[1]==y);
 if(p){if(p[2]=='r'&&G.party[0].lv<3)return say('อันตรายเกินไป ต้องเลเวล 3');return area(p[2],p[3],p[4])}
 G.tr.unshift([G.x,G.y]);G.mt=performance.now();G.stp=(G.stp||0)+1;G.tr.length=Math.min(G.tr.length,3);G.x=x;G.y=y;draw();sfx('step');
@@ -151,9 +181,9 @@ function area(a,sx,sy){G.loc=a;if(sx!=null){G.x=sx;G.y=sy;G.tr=[]}
 if(a=='f'&&!G.fl.ly)return dlg(LY,()=>{G.fl.ly=1;G.party.push(join(CO.ly));showMap()});
 if(a=='r'&&!G.fl.tk)return dlg(TK,()=>{G.fl.tk=1;G.party.push(join(CO.tk));showMap()});
 showMap()}
-function village(){G.loc=='v'?area('v'):area('v',10,7)}
+function village(){G.loc=='v'?area('v'):area('v',17,11)}
 function boss(){if(G.fl.done)return say('ห้องผนึกว่างเปล่าแล้ว');if(G.party[0].lv<5)return say('พลังจากห้องผนึกบีบคั้น ต้องเลเวล 5');dlg(BI,()=>fight(['dr'],()=>dlg(BO,()=>{G.fl.done=1;end()})))}
-addEventListener('keydown',e=>{const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k&&$('cv')){e.preventDefault();if(performance.now()-(G.mt||0)<110)return;mv(...k)}});
+addEventListener('keydown',e=>{const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k&&$('cv')){e.preventDefault();if(performance.now()-(G.mt||0)<110)return;mv(...k)}else if(!k&&$('cv')&&['Enter','e','E','z','Z',' '].includes(e.key)){e.preventDefault();act()}});
 // ===== ต่อสู้ (Weakness / Break / Boost) =====
 const IC={sword:'⚔',bow:'🏹',fire:'🔥',wind:'🌪',hammer:'🔨'};
 const dm=(a,d,p)=>Math.max(1,Math.round((a*p-d*.5)*(.85+Math.random()*.3)));
