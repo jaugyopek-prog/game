@@ -4,8 +4,9 @@ const CHR=(()=>{
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
 const SK=[['#f4c9a0','#d99a78'],['#e0a878','#b9805a'],['#a8704a','#7c4c30']];
 const TH=[['#d8403a','#8c2230'],['#4a7ad8','#26429a'],['#52b04a','#2a7a3c'],['#a050d0','#5e2a8c']];
-const HR={kn:11,mg:12,rg:10,ly:11,tk:11,ok:12,mt:9};
-const BK={kn:'#aab4c8',mg:'#d8dbe8',rg:'#2a7a3c',ly:'#6ee0e8',tk:'#aab4c8',mt:'#d8a868'},FACE={tk:'cC'};
+const HR={kn:11,mg:12,rg:10,ly:11,tk:11,ok:12,mt:9,dw:11,fx:10,ow:10,rb:11};
+const SKN={dw:['#e8b890','#c89068'],fx:['#f28c28','#c4601c'],ow:['#c89868','#946038'],rb:['#f2ece4','#c8c0b8']};
+const BK={kn:'#aab4c8',mg:'#d8dbe8',rg:'#2a7a3c',ly:'#6ee0e8',tk:'#aab4c8',mt:'#d8a868',dw:'#aab4c8',fx:'#f28c28',ow:'#c89868',rb:'#f2ece4'},FACE={tk:'cC'};
 const OF={
 kn:{m:'#aab4c8',d:'#5c6680',a:'#ffd84a',b:'#5c3a22',lg:'#5c6680',st:'a',cp:'#d8403a',cd:'#8c2230',w:'sword'},
 mg:{m:'#a050d0',d:'#5e2a8c',a:'#ffd84a',b:'#5c3a22',st:'r',w:'staff'},
@@ -13,9 +14,14 @@ rg:{m:'#52b04a',d:'#2a7a3c',a:'#946038',b:'#5c3a22',lg:'#5c3a22',st:'a',w:'bow'}
 ly:{m:'#6ee0e8',d:'#2aa0b8',a:'#f890c0',b:'#2aa0b8',st:'r',w:'wand',h:'#f4c9a0'},
 tk:{m:'#aab4c8',d:'#5c6680',a:'#52b04a',b:'#5c6680',lg:'#5c6680',st:'s',w:'hammer',h:'#aab4c8'},
 ok:{m:'#946038',d:'#5c3a22',a:'#9ae070',b:'#5c3a22',st:'r',w:'',h:'#946038'},
-mt:{m:'#4a7ad8',d:'#26429a',a:'#ffd84a',b:'#a8743c',lg:'#d8a868',st:'a',w:'',h:'#d8a868'}};
+mt:{m:'#4a7ad8',d:'#26429a',a:'#ffd84a',b:'#a8743c',lg:'#d8a868',st:'a',w:'',h:'#d8a868'},
+dw:{m:'#946038',d:'#5c3a22',a:'#ffd84a',b:'#5c3a22',lg:'#5c6680',st:'a',w:'',h:'#e8b890'},
+fx:{m:'#52b04a',d:'#2a7a3c',a:'#ffd84a',b:'#5c3a22',lg:'#946038',st:'a',w:'',h:'#f28c28'},
+ow:{m:'#4a7ad8',d:'#26429a',a:'#ffd84a',b:'#5c3a22',st:'r',w:'',h:'#c89868'},
+rb:{m:'#f890c0',d:'#c4608a',a:'#fff',b:'#c4608a',st:'r',w:'',h:'#f2ece4'}};
 const cache={};
 function head(k,ap,back,side){const rows=S[k].slice(0,HR[k]),c=mk(16,HR[k]),x=c.getContext('2d'),Q={...P,'1':BK[k]||'#aab4c8'},fs=FACE[k]||'sSRm';
+if(SKN[k]){Q.s=SKN[k][0];Q.S=SKN[k][1]}
 if(ap){Q.s=SK[ap.s][0];Q.S=SK[ap.s][1];const m={kn:'rR',mg:'pP',rg:'gG'}[k];if(m){Q[m[0]]=TH[ap.t][0];Q[m[1]]=TH[ap.t][1]}}
 rows.forEach((l,y)=>{let f=[...l+[...l].reverse().join('')];if(back){const ix=f.map((q,i)=>fs.includes(q)?i:-1).filter(i=>i>=0);if(ix.length)for(let i=ix[0];i<=ix[ix.length-1];i++)f[i]='1'}
 if(side){const ix=f.map((q,i)=>fs.includes(q)?i:-1).filter(i=>i>=0);if(ix.length){const a=ix[0],b=ix[ix.length-1],sk=k=='tk'?'e':'s',EY=k=='tk'?'cC':'kw',g=f.slice();
