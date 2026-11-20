@@ -5,17 +5,17 @@ const el=i=>document.getElementById(i),mkc=(w,h)=>{const c=document.createElemen
 const COL={sword:'#fff',bow:'#ec6',fire:'#f84',wind:'#8fe',hammer:'#ccd'};
 let pops=[],sps=[],q=0,act=null,bgs={},tmp=mkc(160,75),mt=mkc(96,64),on=0,ml=0;
 const lay=o=>{const i=B.e.indexOf(o);if(i>=0){const n=B.e.length;return{x:n==1?190:n==2?[120,300][i]:[90,215,340][i],y:208+(i%2)*18,s:o.boss?150:92}}const j=G.party.indexOf(o);return{x:455+j*62,y:178+j*40,s:104}};
-function bg(a){if(bgs[a])return bgs[a];const c=mkc(160,75),x=c.getContext('2d'),r=a=='r';
-let g=x.createLinearGradient(0,0,0,40);(r?['#140c28','#5a2060','#e0703a']:['#2a3f78','#c9788a','#ffd9a0']).forEach((s,i)=>g.addColorStop(i/2,s));x.fillStyle=g;x.fillRect(0,0,160,40);
+function bg(a){if(bgs[a])return bgs[a];const c=mkc(160,75),x=c.getContext('2d'),r=a=='r',m=a=='m';
+let g=x.createLinearGradient(0,0,0,40);(r?['#140c28','#5a2060','#e0703a']:m?['#2a1a4a','#c06a8a','#ffd09a']:['#2a3f78','#c9788a','#ffd9a0']).forEach((s,i)=>g.addColorStop(i/2,s));x.fillStyle=g;x.fillRect(0,0,160,40);
 g=x.createRadialGradient(118,28,1,118,28,22);g.addColorStop(0,r?'rgba(255,170,90,.9)':'rgba(255,240,200,.95)');g.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=g;x.fillRect(0,0,160,60);
-[[r?'#3a2050':'#5a5a98',30,9,5,.9],[r?'#2a1840':'#3f4a80',36,7,3,1.7],[r?'#1e1030':'#2c3a62',40,5,2.5,2.9]].forEach(([c1,y,a1,a2,ph],k)=>{x.fillStyle=c1;x.beginPath();x.moveTo(0,50);for(let i=0;i<=160;i++)x.lineTo(i,y-a1*sin(i/(14-k*3)+ph)-a2*sin(i/5+ph*2));x.lineTo(160,50);x.fill()});
-x.fillStyle=r?'#120a20':'#15283a';
-for(let i=-4;i<170;i+=8){const h=r?(i%16?7:14):10+(i*7%5);if(r){x.fillRect(i,40-h,3,h);if(i%16==0)x.fillRect(i-3,40-h,9,2)}else{x.beginPath();x.arc(i+2,40-h/2+3,5+(i%3),0,7);x.fill()}}
-g=x.createLinearGradient(0,33,0,75);g.addColorStop(0,r?'#4a3a5a':'#4a7a4a');g.addColorStop(1,r?'#1c1428':'#142a20');x.fillStyle=g;x.fillRect(0,36,160,39);
+[[r?'#3a2050':m?'#c89a5a':'#5a5a98',30,9,5,.9],[r?'#2a1840':m?'#a87a44':'#3f4a80',36,7,3,1.7],[r?'#1e1030':m?'#8a5c30':'#2c3a62',40,5,2.5,2.9]].forEach(([c1,y,a1,a2,ph],k)=>{x.fillStyle=c1;x.beginPath();x.moveTo(0,50);for(let i=0;i<=160;i++)x.lineTo(i,y-a1*sin(i/(14-k*3)+ph)-a2*sin(i/5+ph*2));x.lineTo(160,50);x.fill()});
+x.fillStyle=r?'#120a20':m?'#6a4a8a':'#15283a';
+for(let i=-4;i<170;i+=8){if(m){const h=6+(i*7%9);x.beginPath();x.moveTo(i,40);x.lineTo(i+3,40-h);x.lineTo(i+6,40);x.fill();continue}const h=r?(i%16?7:14):10+(i*7%5);if(r){x.fillRect(i,40-h,3,h);if(i%16==0)x.fillRect(i-3,40-h,9,2)}else{x.beginPath();x.arc(i+2,40-h/2+3,5+(i%3),0,7);x.fill()}}
+g=x.createLinearGradient(0,33,0,75);g.addColorStop(0,r?'#4a3a5a':m?'#d2aa66':'#4a7a4a');g.addColorStop(1,r?'#1c1428':m?'#6a4a30':'#142a20');x.fillStyle=g;x.fillRect(0,36,160,39);
 return bgs[a]=c}
-function amb(x,W,H,a,t){const r=a=='r';for(let i=0;i<24;i++){const s=i*7.3,px=(s*97+t*(r?.01:.015)*(.5+i%3*.3))%(W+20)-10,py=r?H-((s*53+t*.03*(.5+i%3*.4))%H):((s*37)%H*.9+sin(t/900+s)*12+H*.05),gl=.5+.5*sin(t/400+s),g=x.createRadialGradient(px,py,0,px,py,6);
-g.addColorStop(0,r?`rgba(255,150,60,${.8*gl})`:`rgba(230,255,140,${.9*gl})`);g.addColorStop(1,'rgba(255,255,150,0)');x.fillStyle=g;x.fillRect(px-6,py-6,12,12)}}
-function frame(){const c=el('bc');if(!c||typeof B=='undefined'||!B)return;const x=c.getContext('2d'),t=T=now(),a=G.loc=='r'?'r':'f';
+function amb(x,W,H,a,t){const r=a=='r',m=a=='m';for(let i=0;i<24;i++){const s=i*7.3,px=(s*97+t*(r?.01:.015)*(.5+i%3*.3))%(W+20)-10,py=r?H-((s*53+t*.03*(.5+i%3*.4))%H):((s*37)%H*.9+sin(t/900+s)*12+H*.05),gl=.5+.5*sin(t/400+s),g=x.createRadialGradient(px,py,0,px,py,6);
+g.addColorStop(0,r?`rgba(255,150,60,${.8*gl})`:m?`rgba(170,240,255,${.9*gl})`:`rgba(230,255,140,${.9*gl})`);g.addColorStop(1,'rgba(255,255,150,0)');x.fillStyle=g;x.fillRect(px-6,py-6,12,12)}}
+function frame(){const c=el('bc');if(!c||typeof B=='undefined'||!B)return;const x=c.getContext('2d'),t=T=now(),a=G.loc=='r'?'r':G.loc=='m'?'m':'f';
 x.imageSmoothingEnabled=true;x.drawImage(bg(a),0,0,640,300);
 for(let k=0;k<3;k++){const cx=((t*.008*(k+1)+k*230)%800)-80,g=x.createRadialGradient(cx,50+k*22,0,cx,50+k*22,70);g.addColorStop(0,'rgba(255,255,255,.12)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(cx-70,k*22-20,140,140)}
 x.fillStyle=`rgba(255,230,170,${.05+.03*sin(t/900)})`;[420,470,530].forEach((u,k)=>{x.beginPath();x.moveTo(u,0);x.lineTo(u+50,0);x.lineTo(u-170+k*30,300);x.lineTo(u-230+k*30,300);x.fill()});
