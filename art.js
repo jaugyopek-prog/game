@@ -17,3 +17,11 @@ bt:["......kP","k....kpp","kk..kppp","kPkpprpp","kPPppkww","kpPPppkk",".kpPPppp"
 mu:["....kkkk","..kkrrrr",".krrwwrr","krrwwrrr","krrrrRrr","krrrrwwr","kkkkkkkk",".ktttttt",".ktkttTt",".kttttTT",".kttttRR",".kttttTT","kttttTTT","kTTttTTT",".kkkkkkk","........"],
 sp:["k.......",".k....kk","..k..kPP","...kkPPP","k.kPPrrP","kkPPPrrP","..kPPPPP","k.kPPpPP",".kPPPPPP","kkPPPpPP","..kPPPPP",".k.kkPPP","k....kkk","........","........","........"],
 dr:["kE......","kEE.....","kEEkkkkk",".kEEeeee",".kEeeeEe","kEeoYoee",".kEeeeee",".kEeeEkE",".kEeeeee",".kEkwkwk","..kkwkwk","...kkRRR","..kEEeee",".kEeeeee",".kEEEEEE","kkkkkkkk"]};
+
+// NPC เผ่าใหม่: dw=คนแคระ fx=จิ้งจอก ow=นกฮูก rb=กระต่าย (หัว + ไหล่ให้ครบ 16 แถวสำหรับพอร์ตเทรต)
+const SHD=(d,m,a,n)=>["..k"+d+m.repeat(4),".k"+d+m.repeat(5),"k"+d+m.repeat(4)+a+a,"k"+d+m.repeat(6),"k"+d.repeat(7),"kkkkkkkk"].slice(6-n);
+Object.assign(S,{
+dw:["...kkkkk","..kEeeee",".kEeeWee",".kEEEEEE",".kssssss",".kswksss",".kssssrr","kNNnnnnn","kNnnnnnn",".kNnnnnn","..kNNnnn",...SHD('N','n','y',5)],
+fx:[".kw.....",".kssS...",".ksssssS","kssssssS","ksswksss","ksssswww",".ksswwwk",".kswwwww","..kswwww","...kkwww",...SHD('G','g','y',6)],
+ow:[".kk.....",".kssssss","ksssssss","kswwwwww","kswkwwww","kswwwwww","kssssyyy",".kssssyy","..ksssss","...kkSSS",...SHD('B','b','y',6)],
+rb:[".kwk....",".kmk....",".kmk.kss",".kssssss","ksssssss","ksswksss","ksssssmm",".ksssSRR","..ksssss","...kksss","....kkkk",...SHD('R','m','w',5)]});
